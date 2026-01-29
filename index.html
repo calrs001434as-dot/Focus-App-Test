@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Liquid Glass OS Ultimate</title>
+<style>
+/* ---------- LOADING SCREEN ---------- */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#loadingScreen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-content h1 {
+  margin: 0;
+  font-size: 100px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.loading-content span {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+#focusSettingsBtn {
+  background: transparent;   /* no background */
+  border: none;              /* remove border */
+  padding: 0;                /* optional: shrink padding */
+  font-size: 18px;           /* adjust size if needed */
+  cursor: pointer;           /* still clickable */
+  color: white;              /* match text color */
+}
+#focusSettingsBtn:hover {
+  color: #7c5cff;           /* optional hover color */
+}
+
+/* Floating typing toolbar above textarea */
+#typingToolbar{
+  display:flex;            /* hidden by default */
+  background:rgba(20,20,30,0.45);
+  backdrop-filter:blur(18px);
+  border-radius:12px;
+  padding:6px;
+  gap:6px;
+  display:flex;
+  align-items:center;
+  margin-bottom:4px;       /* space between toolbar and textarea */
+}
+
+/* Toolbar buttons */
+#typingToolbar select, #typingToolbar button{
+  padding:4px;
+  border-radius:8px;
+  border:none;
+  background:rgba(255,255,255,0.08);
+  color:white;
+  cursor:pointer;
+}
+
+#typingToolbar button.bold.active,
+#typingToolbar button.italic.active{
+  background:#7c5cff; /* highlight active */
+}
+
+/* Spinner */
+.spinner {
+  margin: 28px auto 0;
+  width: 42px;
+  height: 42px;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+:root{
+  --glass-bg: rgba(20,20,30,0.45);
+  --blur: blur(18px);
+  --accent:#7c5cff;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro",sans-serif;
+}
+
+/* Base */
+*{box-sizing:border-box;font-family:var(--font);}
+body{
+  margin:0;height:100vh;overflow:hidden;color:white;
+  background:url("https://images.unsplash.com/photo-1501785888041-af3ef285b470") center/cover no-repeat;
+}
+
+/* Glass effect */
+.glass{
+  background:var(--glass-bg);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  border-radius:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+  overflow:hidden;
+}
+
+/* Windows */
+.window{
+  position:absolute;
+  display:none;
+  cursor:move;
+  padding:14px;
+}
+.scalable{
+  transform-origin:top left;
+}
+
+/* Pop animation */
+.pop{animation:pop .25s ease-out;}
+@keyframes pop{
+  from{opacity:0;transform:scale(.96) translateY(6px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+
+/* Inputs */
+input,select,textarea{
+  width:100%;
+  padding:8px;
+  border:none;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+  color:white;
+}
+button{
+  background:var(--accent);
+  border:none;
+  border-radius:12px;
+  padding:8px 12px;
+  color:white;
+  cursor:pointer;
+}
+button:hover{opacity:.85}
+
+/* Taskbar */
+#taskbar{
+  position:absolute;bottom:20px;left:50%;
+  transform:translateX(-50%);
+  display:flex;gap:10px;
+  padding:10px 14px;
+  transition:bottom .3s;
+}
+.task-btn{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  cursor:pointer;
+
+  transition:
+    transform 0.25s cubic-bezier(.25,.8,.25,1),
+    margin 0.25s cubic-bezier(.25,.8,.25,1);
+}
+.task-btn:hover{
+  transform: scale(1.35) translateY(-8px);
+  margin: 0 6px;
+}
+.task-btn:hover + .task-btn,
+.task-btn:has(+ .task-btn:hover){
+  transform: scale(1.15) translateY(-4px);
+}
+
+.task-btn:hover{background:rgba(255,255,255,.08);border-radius:14px}
+
+/* Resize zones */
+.resize{position:absolute;z-index:10}
+.resize.n{top:-4px;left:0;right:0;height:8px;cursor:n-resize}
+.resize.s{bottom:-4px;left:0;right:0;height:8px;cursor:s-resize}
+.resize.e{right:-4px;top:0;bottom:0;width:8px;cursor:e-resize}
+.resize.w{left:-4px;top:0;bottom:0;width:8px;cursor:w-resize}
+.resize.ne{top:-4px;right:-4px;width:12px;height:12px;cursor:ne-resize}
+.resize.nw{top:-4px;left:-4px;width:12px;height:12px;cursor:nw-resize}
+.resize.se{bottom:-4px;right:-4px;width:12px;height:12px;cursor:se-resize}
+.resize.sw{bottom:-4px;left:-4px;width:12px;height:12px;cursor:sw-resize}
+
+/* Clock */
+#clockWin{width:360px;height:220px;top:60px;left:60px}
+#clockTime{font-size:72px;font-weight:600}
+#clockDate{opacity:.8}
+#clockSeconds{font-size:24px;opacity:.6}
+#clockContent {
+  display: flex;
+  flex-direction: column;   /* stack time, seconds, date vertically */
+  align-items: center;      /* horizontally center all children */
+  justify-content: center;  /* vertically center inside clockWin */
+  height: 100%;             /* fill the window height */
+  text-align: center;       /* fallback for text */
+}
+
+#clockTime, #clockSeconds, #clockDate {
+  margin: 0;
+  padding: 0;
+}
+
+/* Iframes */
+.iframeWin{padding:0;width:420px;height:300px}
+iframe{width:100%;height:100%;border:none;border-radius:18px}
+
+/* Background picker previews */
+.bgPreview{
+  width:100px;height:60px;margin:6px;
+  border-radius:12px;
+  background-size:cover;background-position:center;
+  cursor:pointer;
+  display:inline-block;
+}
+
+/* Widget store previews */
+.widget-card{
+  width:160px;height:160px;margin:12px;
+  background:rgba(255,255,255,.05);
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  font-weight:600;
+  text-align:center;
+  transition:.2s;
+}
+.widget-card:hover{background:rgba(255,255,255,.1);}
+.widget-container{display:flex;flex-wrap:wrap;justify-content:center;width:100%;margin-top:20px;}
+
+/* Settings sections */
+.setting-section{margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:10px;}
+.setting-section h3{margin:0 0 10px 0;}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="loading-content">
+    <h1>Focus</h1>
+    <span>Nameless Tech</span>
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<!-- CLOCK -->
+<div id="clockWin" class="glass window scalable">
+  <div id="clockContent">
+    <div id="clockTime">00:00</div>
+    <div id="clockSeconds"></div>
+    <div id="clockDate"></div>
+  </div>
+</div>
+
+<!-- FOCUS WIDGET -->
+<div id="focusWin" class="glass window scalable" style="top:80px;left:80px;width:200px">
+  <div id="focusContent">
+    <strong>Focus</strong>
+    <div id="focusTime" style="font-size:36px;margin:10px 0">25:00</div>
+    <button onclick="startFocus()">Start</button>
+    <button onclick="pauseFocus()">Pause</button>
+    <!-- Settings Button -->
+    <button id="focusSettingsBtn">⚙️</button>
+    
+    <!-- Settings Overlay -->
+    <div id="focusSettingsOverlay" style="
+      display:none;
+      margin-top:6px;
+      background:rgba(0,0,0,0.25);
+      padding:6px;
+      border-radius:8px;
+    ">
+      <label>Set Time (minutes): 
+        <input type="number" id="focusTimeInput" min="1" max="180" value="25" style="width:50px;">
+      </label>
+      <button onclick="updateFocusTime()" style="margin-left:4px;">Set</button>
+    </div>
+  </div>
+</div>
+
+<!-- Alarm Sound -->
+<audio id="focusAlarm" src="https://www.soundjay.com/button/sounds/beep-07.mp3" preload="auto"></audio>
+
+<!-- STOPWATCH -->
+<div id="swWin" class="glass window scalable" style="top:120px;left:120px;width:220px">
+  <div id="swContent">
+    <strong>Stopwatch</strong>
+    <div id="swTime" style="font-size:28px">0.0</div>
+    <button onclick="swStart()">Start</button>
+    <button onclick="swPause()">Pause</button>
+    <button onclick="swReset()">Reset</button>
+  </div>
+</div>
+
+<!-- Background Selector -->
+<div id="bgWin" class="glass window scalable" style="top:60px;left:500px;width:300px">
+  <strong>Backgrounds</strong><br><br>
+  <div id="bgContainer"></div>
+</div>
+
+<!-- Settings Window -->
+<div id="settingsWin" class="glass window scalable" style="top:80px;left:600px;width:400px;height:500px">
+  <strong>Settings</strong>
+
+  <!-- Appearance -->
+  <div class="setting-section">
+    <h3>Appearance</h3>
+    Accent Color: <input type="color" id="accentInput"><br>
+    Font Size: <input type="number" min="12" max="48" value="16" id="fontSizeInput">px<br>
+    Theme: 
+    <select id="themeSelect">
+      <option value="dark">Dark</option>
+      <option value="light">Light</option>
+    </select>
+  </div>
+
+  <!-- Taskbar -->
+  <div class="setting-section">
+    <h3>Taskbar</h3>
+    Auto-hide: <input type="checkbox" id="autoHideCheck"><br>
+    Icon size: <input type="number" min="24" max="64" value="42" id="iconSizeInput">px<br>
+    Position:
+    <select id="taskbarPos">
+      <option value="bottom" selected>Bottom</option>
+      <option value="top">Top</option>
+      <option value="left">Left</option>
+      <option value="right">Right</option>
+    </select>
+  </div>
+
+  <!-- Windows -->
+  <div class="setting-section">
+    <h3>Windows</h3>
+    Show Clock: <input type="checkbox" id="showClock" checked><br>
+    Show Focus Timer: <input type="checkbox" id="showFocus" checked><br>
+    Show Stopwatch: <input type="checkbox" id="showStopwatch" checked>
+  </div>
+
+  <!-- System -->
+  <div class="setting-section">
+    <h3>System</h3>
+    Blur: <input type="range" min="0" max="30" value="18" step="1" id="blurRange">px<br>
+    Background Opacity: <input type="range" min="0.1" max="1" step="0.05" value="0.45" id="bgOpacityRange">
+  </div>
+</div>
+
+<!-- More Widgets -->
+<div id="moreWidgets" class="glass window scalable" style="top:200px;left:200px;width:500px;height:400px">
+  <div style="text-align:center"><strong>More Widgets</strong></div>
+  <div class="widget-container">
+    <div class="widget-card" onclick="toggle('todoWin')">Todo</div>
+    <div class="widget-card" onclick="toggle('calWin')">Calendar</div>
+    <div class="widget-card" onclick="toggle('tableWin')">Table</div>
+    <div class="widget-card" onclick="toggle('spotifyWin')">Spotify</div>
+    <div class="widget-card" onclick="toggle('ytWin')">YouTube</div>
+    <div class="widget-card" onclick="toggle('slidesWin')">Google Slides</div>
+    <div class="widget-card" onclick="toggle('classroomWin')">Google Classroom</div>
+    <div class="widget-card" onclick="toggle('imageWin')">Image Viewer</div>
+    <div class="widget-card" onclick="toggle('textWin')">Text Writer</div>
+    <div class="widget-card" onclick="toggle('mp4Win')">MP4 Player</div>
+    <div class="widget-card" onclick="toggle('ytPlayerWin')">YouTube Player</div>
+  </div>
+</div>
+
+<!-- Todo -->
+<div id="todoWin" class="glass window" style="top:160px;left:160px;width:260px">
+  <strong>Todo</strong>
+  <input id="todoInput" placeholder="Add task">
+  <ul id="todoList"></ul>
+</div>
+
+<!-- Calendar -->
+<div id="calWin" class="glass window scalable" style="top:200px;left:200px;width:220px">
+  <strong>Calendar</strong>
+  <input type="date">
+</div>
+
+<!-- Table -->
+<div id="tableWin" class="glass window" style="top:240px;left:240px;width:260px">
+  <strong>Table</strong>
+  <table id="tbl"><tr><td>A</td><td>B</td></tr><tr><td>1</td><td>2</td></tr></table>
+</div>
+
+<!-- iFrame Widgets -->
+<div id="spotifyWin" class="glass window iframeWin" style="top:100px;left:420px">
+  <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M"></iframe>
+</div>
+<div id="ytWin" class="glass window iframeWin" style="top:140px;left:460px">
+  <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+</div>
+<div id="slidesWin" class="glass window iframeWin" style="top:180px;left:500px">
+  <iframe src="YOUR_PUBLISHED_SLIDES_IFRAME_URL"></iframe>
+</div>
+<div id="classroomWin" class="glass window iframeWin" style="top:220px;left:540px">
+  <iframe src="https://classroom.google.com"></iframe>
+</div>
+
+<!-- Image Viewer -->
+<div id="imageWin" class="glass window scalable" style="top:260px;left:580px;width:300px;height:220px">
+  <strong>Image Viewer</strong>
+  <input type="file" id="imgInput" accept="image/*"><br><br>
+  <img id="imgDisplay" style="width:100%;height:150px;object-fit:contain;border-radius:12px;">
+</div>
+
+<!-- YouTube Player Widget -->
+<div id="ytPlayerWin" class="glass window scalable" style="top:300px;left:740px;width:420px;height:320px">
+  
+  <!-- YouTube iframe -->
+  <div style="width:100%;height:220px;border-radius:16px;overflow:hidden;background:#000;">
+    <iframe id="ytPlayerIframe"
+      style="width:100%;height:100%;border:none;"
+      allowfullscreen
+      src="">
+    </iframe>
+  </div>
+
+  <!-- URL input -->
+  <input type="text" id="ytPlayerInput" placeholder="Paste YouTube link here" style="width:100%;margin-top:10px">
+
+  <button onclick="loadYTVideo()" style="margin-top:6px;width:100%">Load</button>
+
+  <!-- Optional: Fullscreen button -->
+  <button onclick="fullscreenYT()" style="margin-top:6px;width:100%">Fullscreen</button>
+</div>
+
+<!-- MP4 Player -->
+<div id="mp4Win" class="glass window scalable" style="top:180px;left:700px;width:420px;height:320px">
+  <video id="mp4Video" src="" style="width:100%;height:220px;border-radius:16px;object-fit:cover" controlslist="nodownload"></video>
+
+  <!-- Controls -->
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    margin-top:12px;
+  ">
+    <button onclick="skipVideo(-5)"><</button>
+
+    <button id="playPauseBtn"
+      onclick="togglePlay()"
+      style="
+        width:54px;
+        height:54px;
+        border-radius:50%;
+        font-size:22px;
+      ">▶</button>
+
+    <button onclick="skipVideo(5)">></button>
+  </div>
+
+  <!-- Bottom Controls -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+    <select onchange="setSpeed(this.value)">
+      <option value="0.5">0.5×</option>
+      <option value="1" selected>1×</option>
+      <option value="1.5">1.5×</option>
+      <option value="2">2×</option>
+    </select>
+
+    <button onclick="fullscreenVideo()">⛶</button>
+  </div>
+
+  <input type="file" accept="video/mp4" onchange="loadVideo(this)" style="margin-top:10px">
+</div>
+
+<!-- Text Writer Widget -->
+<div id="textWin" class="glass window scalable" style="top:300px;left:620px;width:300px;height:220px">
+  <strong>Text Writer</strong>
+
+  <!-- Typing Toolbar (positioned above textarea) -->
+  <div id="typingToolbar">
+    <select id="fontSizeSelect">
+      <option value="14">14px</option>
+      <option value="16" selected>16px</option>
+      <option value="18">18px</option>
+      <option value="20">20px</option>
+      <option value="24">24px</option>
+    </select>
+    <button id="boldBtn" class="bold">B</button>
+    <button id="italicBtn" class="italic">I</button>
+  </div>
+
+  <textarea id="textArea" placeholder="Write anything..." style="height:150px;margin-top:10px;"></textarea>
+</div>
+
+<!-- Taskbar -->
+<div id="taskbar" class="glass">
+  <div class="task-btn" onclick="toggle('clockWin')">🕒</div>
+  <div class="task-btn" onclick="toggle('focusWin')">⏳</div>
+  <div class="task-btn" onclick="toggle('swWin')">⏱️</div>
+  <div class="task-btn" onclick="toggle('moreWidgets')">➕</div>
+  <div class="task-btn" onclick="toggle('bgWin')">🖼️</div>
+  <div class="task-btn" onclick="toggle('settingsWin')">⚙️</div>
+</div>
+
+<script>
+// ---------- LOADING SCREEN ----------
+window.addEventListener("load", () => {
+  const loader = document.getElementById("loadingScreen");
+  setTimeout(() => { loader.classList.add("hidden"); }, 600);
+});
+
+// ---------- Toggle ----------
+function toggle(id){
+  const w=document.getElementById(id);
+  if(!w)return;
+  w.style.display=w.style.display==="block"?"none":"block";
+  w.classList.remove("pop"); void w.offsetWidth; w.classList.add("pop");
+}
+
+// ---------- Clock ----------
+setInterval(()=>{
+  const d=new Date();
+  clockTime.textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  clockSeconds.textContent=d.getSeconds().toString().padStart(2,"0");
+  clockDate.textContent=d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+},100);
+const textArea = document.getElementById("textArea");
+const toolbar = document.getElementById("typingToolbar");
+const fontSelect = document.getElementById("fontSizeSelect");
+const boldBtn = document.getElementById("boldBtn");
+const italicBtn = document.getElementById("italicBtn");
+
+// Font size change
+fontSelect.addEventListener("change", () => {
+  textArea.style.fontSize = fontSelect.value + "px";
+});
+
+// Bold toggle
+boldBtn.addEventListener("click", () => {
+  textArea.style.fontWeight = textArea.style.fontWeight === "bold" ? "normal" : "bold";
+  boldBtn.classList.toggle("active");
+});
+
+// Italic toggle
+italicBtn.addEventListener("click", () => {
+  textArea.style.fontStyle = textArea.style.fontStyle === "italic" ? "normal" : "italic";
+  italicBtn.classList.toggle("active");
+});
+
+// ---------- Focus ----------
+let ft = 1500, fr = null; // default 25 minutes
+const focusTimeDisplay = document.getElementById("focusTime");
+const focusAlarm = document.getElementById("focusAlarm");
+
+// Update the displayed time
+function updateFocus() {
+  const minutes = Math.floor(ft / 60).toString().padStart(2,"0");
+  const seconds = (ft % 60).toString().padStart(2,"0");
+  focusTimeDisplay.textContent = `${minutes}:${seconds}`;
+}
+
+// Start the timer
+function startFocus() {
+  clearInterval(fr);
+  fr = setInterval(() => {
+    if(ft > 0){
+      ft--;
+      updateFocus();
+    } else {
+      clearInterval(fr);
+      // Play alarm
+      focusAlarm.currentTime = 0;
+      focusAlarm.play();
+      // Stop alarm after 5 seconds
+      setTimeout(() => { focusAlarm.pause(); }, 5000);
+    }
+  }, 1000);
+}
+
+// Pause the timer
+function pauseFocus() {
+  clearInterval(fr);
+}
+
+// ---------- Settings Button ----------
+const focusSettingsBtn = document.getElementById("focusSettingsBtn");
+const focusSettingsOverlay = document.getElementById("focusSettingsOverlay");
+focusSettingsBtn.addEventListener("click", () => {
+  focusSettingsOverlay.style.display = focusSettingsOverlay.style.display === "block" ? "none" : "block";
+});
+
+// ---------- Update Focus Time ----------
+function updateFocusTime(){
+  const newTime = parseInt(document.getElementById("focusTimeInput").value);
+  if(!isNaN(newTime) && newTime > 0){
+    ft = newTime * 60; // convert minutes to seconds
+    updateFocus();
+  }
+}
+
+// ---------- Stopwatch ----------
+let sw=0,si=null;
+function swStart(){if(!si)si=setInterval(()=>{sw+=.1;swTime.textContent=sw.toFixed(1)},100)}
+function swPause(){clearInterval(si);si=null}
+function swReset(){swPause();sw=0;swTime.textContent="0.0"}
+
+// ---------- Todo ----------
+todoInput.onkeydown=e=>{
+  if(e.key==="Enter"&&e.target.value){
+    const li=document.createElement("li");
+    li.textContent=e.target.value;
+    todoList.appendChild(li);
+    e.target.value="";
+  }
+}
+
+// ---------- Image Viewer ----------
+imgInput.onchange=e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=f=>imgDisplay.src=f.target.result;
+  reader.readAsDataURL(file);
+}
+
+// ---------- MP4 Video ----------
+const video = document.getElementById("mp4Video");
+const playBtn = document.getElementById("playPauseBtn");
+function loadVideo(input){const file=input.files[0];if(!file)return;video.src=URL.createObjectURL(file);video.load();}
+function togglePlay(){if(video.paused){video.play();playBtn.textContent="||";}else{video.pause();playBtn.textContent="▶";}}
+function skipVideo(sec){video.currentTime+=sec;}
+function setSpeed(speed){video.playbackRate=speed;}
+function fullscreenVideo(){if(video.requestFullscreen)video.requestFullscreen();}
+
+// ---------- Backgrounds ----------
+const bgs=[
+ {url:"https://images.unsplash.com/photo-1501785888041-af3ef285b470",name:"Nature"},
+ {url:"https://images.unsplash.com/photo-1497215842964-222b430dc094",name:"City"},
+ {url:"https://images.unsplash.com/photo-1519681393784-d120267933ba",name:"Night"},
+ {url:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", name:"Mountains"},
+ {url:"https://images.unsplash.com/photo-1472214103451-9374bd1c798e", name:"Forest"},
+ {url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e", name:"Ocean"},
+ {url:"https://images.unsplash.com/photo-1519125323398-675f0ddb6308", name:"Abstract"},
+ {url:"https://images.unsplash.com/photo-1505678261036-a3fcc5e884ee", name:"Space"},
+ {url:"https://images.unsplash.com/photo-1465101162946-4377e57745c3", name:"Beach"},
+ {url:"https://images.unsplash.com/photo-1470770903676-69b98201ea1c", name:"Road"},
+];
+const bgContainer=document.getElementById("bgContainer");
+bgs.forEach(bg=>{
+  const div=document.createElement("div");
+  div.className="bgPreview";
+  div.style.backgroundImage=`url(${bg.url})`;
+  div.title=bg.name;
+  div.onclick=()=>document.body.style.background=`url(${bg.url}) center/cover no-repeat`;
+  bgContainer.appendChild(div);
+});
+
+// ---------- ELEMENTS ----------
+const accentInput=document.getElementById("accentInput");
+const fontSizeInput=document.getElementById("fontSizeInput");
+const themeSelect=document.getElementById("themeSelect");
+const autoHideCheck=document.getElementById("autoHideCheck");
+const iconSizeInput=document.getElementById("iconSizeInput");
+const taskbarPos=document.getElementById("taskbarPos");
+const showClock=document.getElementById("showClock");
+const showFocus=document.getElementById("showFocus");
+const showStopwatch=document.getElementById("showStopwatch");
+const blurRange=document.getElementById("blurRange");
+const bgOpacityRange=document.getElementById("bgOpacityRange");
+const taskbar=document.getElementById("taskbar");
+
+// ---------- APPEARANCE ----------
+accentInput.addEventListener("input", e=>{document.documentElement.style.setProperty("--accent",e.target.value)});
+fontSizeInput.addEventListener("input", e=>{document.documentElement.style.fontSize=e.target.value+"px"});
+
+// ======= LIGHT/DARK THEME =======
+themeSelect.addEventListener("change", e=>{
+  const val=e.target.value;
+  if(val==="dark"){
+    document.body.style.backgroundColor="#14141e";
+    document.body.style.color="white";
+    document.documentElement.style.setProperty("--glass-bg", `rgba(20,20,30,${bgOpacityRange.value})`);
+    document.querySelectorAll("input,select,textarea").forEach(el=>{
+      el.style.background="rgba(255,255,255,.08)";
+      el.style.color="#fff";
+    });
+  } else {
+    document.body.style.backgroundColor="#f0f0f0";
+    document.body.style.color="#000";
+    document.documentElement.style.setProperty("--glass-bg", `rgba(255,255,255,${bgOpacityRange.value})`);
+    document.querySelectorAll("input,select,textarea").forEach(el=>{
+      el.style.background="rgba(0,0,0,.05)";
+      el.style.color="#000";
+    });
+  }
+});
+
+// ---------- TASKBAR ----------
+let autoHideEnabled=false;
+autoHideCheck.addEventListener("change", e=>{autoHideEnabled=e.target.checked;if(!autoHideEnabled) taskbar.style.opacity=1});
+iconSizeInput.addEventListener("input", e=>{
+  const size=e.target.value+"px";
+  document.querySelectorAll(".task-btn").forEach(btn=>{
+    btn.style.width=size;
+    btn.style.height=size;
+    btn.style.fontSize=parseInt(size)/2+"px";
+  });
+});
+taskbarPos.addEventListener("change", e=>{
+  const pos=e.target.value;
+  taskbar.style.top=taskbar.style.bottom=taskbar.style.left=taskbar.style.right="auto";
+  taskbar.style.flexDirection="row";
+  if(pos==="bottom"){taskbar.style.bottom="20px";taskbar.style.left="50%";taskbar.style.transform="translateX(-50%)";taskbar.style.flexDirection="row";}
+  else if(pos==="top"){taskbar.style.top="20px";taskbar.style.left="50%";taskbar.style.transform="translateX(-50%)";taskbar.style.flexDirection="row";}
+  else if(pos==="left"){taskbar.style.top="50%";taskbar.style.left="20px";taskbar.style.transform="translateY(-50%)";taskbar.style.flexDirection="column";}
+  else if(pos==="right"){taskbar.style.top="50%";taskbar.style.right="20px";taskbar.style.transform="translateY(-50%)";taskbar.style.flexDirection="column";}
+});
+
+// ---------- AUTO-HIDE ----------
+function updateTaskbarVisibility(e){if(!autoHideEnabled)return;
+  const pos=taskbarPos.value,margin=20,hiddenOffset=-70;
+  if(pos==="bottom") taskbar.style.bottom=e.clientY>window.innerHeight-80?margin+"px":hiddenOffset+"px";
+  if(pos==="top") taskbar.style.top=e.clientY<80?margin+"px":hiddenOffset+"px";
+  if(pos==="left") taskbar.style.left=e.clientX<80?margin+"px":hiddenOffset+"px";
+  if(pos==="right") taskbar.style.right=e.clientX>window.innerWidth-80?margin+"px":hiddenOffset+"px";
+}
+document.body.addEventListener("mousemove", updateTaskbarVisibility);
+autoHideCheck.addEventListener("change", e=>{
+  autoHideEnabled=e.target.checked;
+  if(!autoHideEnabled){
+    const pos=taskbarPos.value;
+    if(pos==="bottom") taskbar.style.bottom="20px";
+    if(pos==="top") taskbar.style.top="20px";
+    if(pos==="left") taskbar.style.left="20px";
+    if(pos==="right") taskbar.style.right="20px";
+  }
+});
+taskbar.style.transition="transform 0.25s ease,bottom 0.25s ease,top 0.25s ease,left 0.25s ease,right 0.25s ease";
+
+// ---------- WINDOWS ----------
+showClock.addEventListener("change", e=>{document.getElementById("clockWin").style.display=e.target.checked?"block":"none"});
+showFocus.addEventListener("change", e=>{document.getElementById("focusWin").style.display=e.target.checked?"block":"none"});
+showStopwatch.addEventListener("change", e=>{document.getElementById("swWin").style.display=e.target.checked?"block":"none"});
+
+// ---------- SYSTEM ----------
+blurRange.addEventListener("input", e=>{document.documentElement.style.setProperty("--blur",`blur(${e.target.value}px)`)});
+bgOpacityRange.addEventListener("input", e=>{
+  const theme=themeSelect.value;
+  if(theme==="dark") document.documentElement.style.setProperty("--glass-bg",`rgba(20,20,30,${e.target.value})`);
+  else document.documentElement.style.setProperty("--glass-bg",`rgba(255,255,255,${e.target.value})`);
+});
+
+// ---------- Drag + Resize ----------
+document.querySelectorAll(".window").forEach(win=>{
+  win.onmousedown=e=>{
+    if(e.target.classList.contains("resize"))return;
+    let x=e.clientX-win.offsetLeft,y=e.clientY-win.offsetTop;
+    document.onmousemove=ev=>{win.style.left=ev.clientX-x+"px";win.style.top=ev.clientY-y+"px"; scaleWindow(win);}
+    document.onmouseup=()=>document.onmousemove=null;
+  };
+  ["n","s","e","w","ne","nw","se","sw"].forEach(d=>{
+    const r=document.createElement("div"); r.className="resize "+d; win.appendChild(r);
+    r.onmousedown=e=>{
+      e.stopPropagation();
+      let sx=e.clientX,sy=e.clientY,sw=win.offsetWidth,sh=win.offsetHeight,sl=win.offsetLeft,st=win.offsetTop;
+      document.onmousemove=ev=>{
+        if(d.includes("e"))win.style.width=sw+(ev.clientX-sx)+"px";
+        if(d.includes("s"))win.style.height=sh+(ev.clientY-sy)+"px";
+        if(d.includes("w")){win.style.width=sw-(ev.clientX-sx)+"px";win.style.left=sl+(ev.clientX-sx)+"px";}
+        if(d.includes("n")){win.style.height=sh-(ev.clientY-sy)+"px";win.style.top=st+(ev.clientY-sy)+"px";}
+        scaleWindow(win);
+      };
+      document.onmouseup=()=>document.onmousemove=null;
+    };
+  });
+});
+
+// ---------- Scaling ----------
+function scaleWindow(win){
+  if(["todoWin","tableWin"].includes(win.id)) return;
+  const container = win.querySelectorAll(".scalable,#clockContent,#focusContent,#swContent");
+  container.forEach(c=>{
+    let baseW=c.dataset.baseW || c.offsetWidth;
+    if(!c.dataset.baseW)c.dataset.baseW=c.offsetWidth;
+    const scale = win.offsetWidth / baseW;
+    c.style.transform=`scale(${scale})`;
+  });
+}
+</script>
+</body>
+</html>
