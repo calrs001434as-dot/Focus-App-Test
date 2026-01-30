@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Focus App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liquid Glass OS Ultimate</title>
 <style>
 /* ---------- LOADING SCREEN ---------- */
 #loadingScreen {
@@ -38,45 +39,6 @@
   font-size: 14px;
   opacity: 0.7;
 }
-#focusSettingsBtn {
-  background: transparent;   /* no background */
-  border: none;              /* remove border */
-  padding: 0;                /* optional: shrink padding */
-  font-size: 18px;           /* adjust size if needed */
-  cursor: pointer;           /* still clickable */
-  color: white;              /* match text color */
-}
-#focusSettingsBtn:hover {
-  color: #7c5cff;           /* optional hover color */
-}
-
-/* Floating typing toolbar above textarea */
-#typingToolbar{
-  display:flex;            /* hidden by default */
-  background:rgba(20,20,30,0.45);
-  backdrop-filter:blur(18px);
-  border-radius:12px;
-  padding:6px;
-  gap:6px;
-  display:flex;
-  align-items:center;
-  margin-bottom:4px;       /* space between toolbar and textarea */
-}
-
-/* Toolbar buttons */
-#typingToolbar select, #typingToolbar button{
-  padding:4px;
-  border-radius:8px;
-  border:none;
-  background:rgba(255,255,255,0.08);
-  color:white;
-  cursor:pointer;
-}
-
-#typingToolbar button.bold.active,
-#typingToolbar button.italic.active{
-  background:#7c5cff; /* highlight active */
-}
 
 /* Spinner */
 .spinner {
@@ -104,7 +66,7 @@
 *{box-sizing:border-box;font-family:var(--font);}
 body{
   margin:0;height:100vh;overflow:hidden;color:white;
-  background:url("https://images.unsplash.com/photo-1501785888041-af3ef285b470") center/cover no-repeat;
+  background:url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4") center/cover no-repeat;
 }
 
 /* Glass effect */
@@ -121,11 +83,68 @@ body{
 .window{
   position:absolute;
   display:none;
-  cursor:move;
   padding:14px;
+  min-width: 200px;
+  min-height: 150px;
 }
-.scalable{
-  transform-origin:top left;
+.window.active {
+  z-index: 100;
+}
+
+/* Window header */
+.window-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  cursor: move;
+}
+
+body.hide-headers .window-header {
+  display: none;
+}
+
+body.hide-headers .window {
+  padding: 0;
+}
+
+body.hide-headers .window > div:not(.window-header),
+body.hide-headers .window > input,
+body.hide-headers .window > ul,
+body.hide-headers .window > table {
+  padding: 14px;
+}
+
+.window-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.window-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.window-btn:hover {
+  opacity: 0.7;
+}
+
+.window-btn.close {
+  background: #ff5f57;
+}
+
+.window-btn.maximize {
+  background: #28ca42;
 }
 
 /* Pop animation */
@@ -143,7 +162,14 @@ input,select,textarea{
   border-radius:12px;
   background:rgba(255,255,255,.08);
   color:white;
+  outline: none;
+  transition: background 0.2s;
 }
+
+input:focus, select:focus, textarea:focus {
+  background: rgba(255,255,255,.12);
+}
+
 button{
   background:var(--accent);
   border:none;
@@ -151,8 +177,11 @@ button{
   padding:8px 12px;
   color:white;
   cursor:pointer;
+  transition: opacity 0.2s, transform 0.1s;
 }
+
 button:hover{opacity:.85}
+button:active{transform: scale(0.98)}
 
 /* Taskbar */
 #taskbar{
@@ -160,8 +189,10 @@ button:hover{opacity:.85}
   transform:translateX(-50%);
   display:flex;gap:10px;
   padding:10px 14px;
-  transition:bottom .3s;
+  transition:bottom .3s, top .3s, left .3s, right .3s;
+  z-index: 1000;
 }
+
 .task-btn{
   width:42px;
   height:42px;
@@ -169,21 +200,30 @@ button:hover{opacity:.85}
   place-items:center;
   font-size:18px;
   cursor:pointer;
-
+  border-radius: 14px;
   transition:
     transform 0.25s cubic-bezier(.25,.8,.25,1),
-    margin 0.25s cubic-bezier(.25,.8,.25,1);
+    margin 0.25s cubic-bezier(.25,.8,.25,1),
+    background 0.2s;
 }
+
+.task-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: white;
+  transition: fill 0.2s;
+}
+
 .task-btn:hover{
   transform: scale(1.35) translateY(-8px);
   margin: 0 6px;
+  background:rgba(255,255,255,.08);
 }
+
 .task-btn:hover + .task-btn,
 .task-btn:has(+ .task-btn:hover){
   transform: scale(1.15) translateY(-4px);
 }
-
-.task-btn:hover{background:rgba(255,255,255,.08);border-radius:14px}
 
 /* Resize zones */
 .resize{position:absolute;z-index:10}
@@ -198,53 +238,1021 @@ button:hover{opacity:.85}
 
 /* Clock */
 #clockWin{width:360px;height:220px;top:60px;left:60px}
-#clockTime{font-size:72px;font-weight:600}
-#clockDate{opacity:.8}
-#clockSeconds{font-size:24px;opacity:.6}
+#clockTime{font-size:72px;font-weight:600;margin:0}
+#clockDate{opacity:.8;margin:8px 0 0 0}
+#clockSeconds{font-size:24px;opacity:.6;margin:4px 0 0 0}
 #clockContent {
   display: flex;
-  flex-direction: column;   /* stack time, seconds, date vertically */
-  align-items: center;      /* horizontally center all children */
-  justify-content: center;  /* vertically center inside clockWin */
-  height: 100%;             /* fill the window height */
-  text-align: center;       /* fallback for text */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
 }
 
-#clockTime, #clockSeconds, #clockDate {
+/* Focus Widget */
+#focusWin {
+  width: 240px;
+  top: 80px;
+  left: 440px;
+}
+
+#focusContent {
+  text-align: center;
+}
+
+#focusTime {
+  font-size: 48px;
+  font-weight: 600;
+  margin: 20px 0;
+}
+
+.focus-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.focus-buttons button {
+  flex: 1;
+  font-size: 13px;
+}
+
+#focusSettingsBtn {
+  background: rgba(255,255,255,0.08);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+#focusSettingsBtn svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+}
+
+#focusSettingsOverlay {
+  display: none;
+  margin-top: 12px;
+  background: rgba(0,0,0,0.3);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+#focusSettingsOverlay label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+#focusTimeInput {
+  width: 80px;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+/* Stopwatch */
+#swWin {
+  width: 240px;
+  top: 120px;
+  left: 700px;
+}
+
+#swContent {
+  text-align: center;
+}
+
+#swTime {
+  font-size: 42px;
+  font-weight: 600;
+  margin: 20px 0;
+}
+
+.sw-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.sw-buttons button {
+  flex: 1;
+  font-size: 12px;
+}
+
+/* Background Selector */
+#bgWin {
+  top: 60px;
+  right: 60px;
+  width: 340px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.bgPreview{
+  width:100px;
+  height:60px;
+  margin:6px;
+  border-radius:12px;
+  background-size:cover;
+  background-position:center;
+  cursor:pointer;
+  display:inline-block;
+  border: 2px solid transparent;
+  transition: border 0.2s, transform 0.2s;
+}
+
+.bgPreview:hover {
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* Settings Window */
+#settingsWin {
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.settings-content {
+  padding: 4px;
+}
+
+/* Account Profile Section */
+.account-profile {
+  background: linear-gradient(135deg, var(--accent) 0%, rgba(124, 92, 255, 0.6) 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.account-profile::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-20px, -20px); }
+}
+
+.profile-picture-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-picture {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border: 3px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-picture:hover {
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,0.6);
+}
+
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-picture-upload {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 24px;
+}
+
+.profile-picture:hover .profile-picture-upload {
+  opacity: 1;
+}
+
+.profile-info {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.profile-username {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.profile-status {
+  font-size: 14px;
+  opacity: 0.9;
   margin: 0;
+  color: rgba(255,255,255,0.9);
+}
+
+.profile-edit-btn {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.profile-edit-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+
+/* Account Settings Modal */
+.account-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  animation: fadeIn 0.3s ease;
+}
+
+.account-modal.active {
+  display: flex;
+}
+
+.account-modal-content {
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.account-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.account-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.account-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,95,87,0.2);
+  border: none;
+  color: #ff5f57;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.account-modal-close:hover {
+  background: #ff5f57;
+  color: white;
+  transform: scale(1.1);
+}
+
+.account-form-group {
+  margin-bottom: 20px;
+}
+
+.account-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.account-form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.account-form-group input:focus {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.1);
+}
+
+.account-save-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.account-save-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.login-section {
+  text-align: center;
+}
+
+.login-section p {
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.setting-section {
+  background: rgba(255,255,255,0.03);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.setting-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setting-section h3 svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--accent);
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.setting-row:last-child {
+  margin-bottom: 0;
+}
+
+.setting-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.setting-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setting-control input[type="color"],
+.setting-control input[type="number"],
+.setting-control select {
+  width: auto;
+  min-width: 100px;
+}
+
+.setting-control input[type="range"] {
+  width: 150px;
+}
+
+.setting-control input[type="checkbox"] {
+  width: auto;
+  height: 20px;
+  cursor: pointer;
+}
+
+.range-value {
+  font-size: 12px;
+  opacity: 0.7;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* More Widgets */
+#moreWidgets {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.widget-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.widget-card {
+  aspect-ratio: 1;
+  background: rgba(255,255,255,.05);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s;
+  padding: 12px;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.widget-card:hover {
+  background: rgba(255,255,255,.1);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+.widget-card:active {
+  cursor: grabbing;
+}
+
+.widget-card svg {
+  width: 40px;
+  height: 40px;
+  fill: var(--accent);
+  margin-bottom: 8px;
+}
+
+.widget-card span {
+  font-size: 13px;
+}
+
+.widget-preview {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 8px;
+  text-align: center;
+}
+
+.widget-card:hover .widget-preview {
+  opacity: 1;
+}
+
+/* Dragging state */
+.widget-card.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+/* Todo */
+#todoWin {
+  top: 160px;
+  left: 160px;
+  width: 280px;
+}
+
+#todoList {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#todoList li {
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+  word-wrap: break-word;
+}
+
+#todoList li:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Calendar */
+#calWin {
+  top: 200px;
+  left: 200px;
+  width: 240px;
+}
+
+/* Table */
+#tableWin {
+  top: 240px;
+  left: 240px;
+  width: 300px;
+}
+
+#tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+#tbl td {
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+}
+
+/* iFrame Widgets */
+.iframeWin {
+  width: 420px;
+  height: 320px;
+}
+
+#spotifyWin { top: 100px; left: 420px; }
+#ytWin { top: 140px; left: 460px; }
+#slidesWin { top: 180px; left: 500px; }
+#classroomWin { top: 220px; left: 540px; }
+
+/* Image Viewer */
+#imageWin {
+  top: 260px;
+  left: 580px;
+  width: 320px;
+  height: 280px;
+}
+
+#imgDisplay {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.2);
+  margin-top: 8px;
+}
+
+/* YouTube Player */
+#ytPlayerWin {
+  top: 300px;
+  right: 100px;
+  width: 420px;
+  height: 360px;
+}
+
+.yt-container {
+  width: 100%;
+  height: 240px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+#ytPlayerIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+#ytPlayerInput {
+  margin-top: 12px;
+}
+
+.yt-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.yt-buttons button {
+  flex: 1;
+  font-size: 13px;
+}
+
+/* MP4 Player */
+#mp4Win {
+  top: 180px;
+  right: 200px;
+  width: 420px;
+  height: 380px;
+}
+
+#mp4Video {
+  width: 100%;
+  height: 240px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: #000;
+}
+
+.video-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.video-controls button {
+  background: rgba(255,255,255,0.1);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
 }
 
-/* Iframes */
-.iframeWin{padding:0;width:420px;height:300px}
-iframe{width:100%;height:100%;border:none;border-radius:18px}
-
-/* Background picker previews */
-.bgPreview{
-  width:100px;height:60px;margin:6px;
-  border-radius:12px;
-  background-size:cover;background-position:center;
-  cursor:pointer;
-  display:inline-block;
+#playPauseBtn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
-/* Widget store previews */
-.widget-card{
-  width:160px;height:160px;margin:12px;
-  background:rgba(255,255,255,.05);
-  border-radius:18px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  font-weight:600;
-  text-align:center;
-  transition:.2s;
+#playPauseBtn svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
 }
-.widget-card:hover{background:rgba(255,255,255,.1);}
-.widget-container{display:flex;flex-wrap:wrap;justify-content:center;width:100%;margin-top:20px;}
 
-/* Settings sections */
-.setting-section{margin-bottom:20px;border-bottom:1px solid rgba(255,255,255,.15);padding-bottom:10px;}
-.setting-section h3{margin:0 0 10px 0;}
+.video-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 8px;
+}
+
+.video-bottom select {
+  width: auto;
+  min-width: 80px;
+}
+
+.video-bottom button {
+  background: rgba(255,255,255,0.1);
+  padding: 8px;
+}
+
+/* Text Writer */
+#textWin {
+  top: 300px;
+  left: 620px;
+  width: 340px;
+  height: 280px;
+}
+
+#typingToolbar {
+  display: flex;
+  background: rgba(20,20,30,0.45);
+  backdrop-filter: blur(18px);
+  border-radius: 12px;
+  padding: 6px;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+#typingToolbar select,
+#typingToolbar button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 12px;
+}
+
+#typingToolbar button {
+  width: 32px;
+  padding: 6px;
+  font-weight: 600;
+}
+
+#typingToolbar button:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+#typingToolbar button.active {
+  background: var(--accent);
+}
+
+#textArea {
+  height: 180px;
+  resize: vertical;
+  font-family: monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* AI Assistant */
+#aiAssistant {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: none;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+#aiAssistant.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Glowing border effect */
+body.ai-active::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 3px solid var(--accent);
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: 
+    0 0 20px var(--accent),
+    inset 0 0 20px var(--accent),
+    0 0 40px var(--accent),
+    inset 0 0 40px var(--accent);
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.ai-orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  margin-bottom: 30px;
+  box-shadow: 
+    0 0 30px var(--accent),
+    0 0 60px var(--accent),
+    inset 0 0 20px rgba(255,255,255,0.1);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.ai-chat-container {
+  width: 90%;
+  max-width: 700px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-close-btn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #ff5f57;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 15px rgba(255, 95, 87, 0.4);
+  transition: all 0.2s;
+}
+
+.ai-close-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(255, 95, 87, 0.6);
+}
+
+.ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding: 10px;
+  max-height: 400px;
+}
+
+.ai-message {
+  margin-bottom: 15px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.ai-message.user {
+  background: var(--accent);
+  margin-left: auto;
+  margin-right: 0;
+  max-width: 80%;
+  text-align: right;
+}
+
+.ai-message.assistant {
+  background: rgba(255,255,255,0.1);
+  margin-right: auto;
+  margin-left: 0;
+  max-width: 80%;
+}
+
+.ai-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.ai-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  color: white;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.ai-input:focus {
+  background: rgba(255,255,255,0.15);
+  border-color: var(--accent);
+}
+
+.ai-send-btn {
+  padding: 12px 24px;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.ai-send-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.ai-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ai-typing {
+  display: none;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  margin-bottom: 15px;
+  max-width: 80%;
+}
+
+.ai-typing.active {
+  display: block;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.6;
+  animation: typingDot 1.4s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-10px); }
+}
 </style>
 </head>
 <body>
@@ -259,7 +1267,14 @@ iframe{width:100%;height:100%;border:none;border-radius:18px}
 </div>
 
 <!-- CLOCK -->
-<div id="clockWin" class="glass window scalable">
+<div id="clockWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Clock</div>
+    <div class="window-controls">
+      <div class="window-btn maximize" onclick="maximizeWindow('clockWin')"></div>
+      <div class="window-btn close" onclick="closeWindow('clockWin')"></div>
+    </div>
+  </div>
   <div id="clockContent">
     <div id="clockTime">00:00</div>
     <div id="clockSeconds"></div>
@@ -268,27 +1283,29 @@ iframe{width:100%;height:100%;border:none;border-radius:18px}
 </div>
 
 <!-- FOCUS WIDGET -->
-<div id="focusWin" class="glass window scalable" style="top:80px;left:80px;width:200px">
+<div id="focusWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Focus Timer</div>
+    <div class="window-controls">
+      <div class="window-btn maximize" onclick="maximizeWindow('focusWin')"></div>
+      <div class="window-btn close" onclick="closeWindow('focusWin')"></div>
+    </div>
+  </div>
   <div id="focusContent">
-    <strong>Focus</strong>
-    <div id="focusTime" style="font-size:36px;margin:10px 0">25:00</div>
-    <button onclick="startFocus()">Start</button>
-    <button onclick="pauseFocus()">Pause</button>
-    <!-- Settings Button -->
-    <button id="focusSettingsBtn">⚙️</button>
-    
-    <!-- Settings Overlay -->
-    <div id="focusSettingsOverlay" style="
-      display:none;
-      margin-top:6px;
-      background:rgba(0,0,0,0.25);
-      padding:6px;
-      border-radius:8px;
-    ">
+    <div id="focusTime">25:00</div>
+    <div class="focus-buttons">
+      <button onclick="startFocus()">Start</button>
+      <button onclick="pauseFocus()">Pause</button>
+      <button onclick="resetFocus()">Reset</button>
+    </div>
+    <button id="focusSettingsBtn" onclick="toggleFocusSettings()">
+      <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+    </button>
+    <div id="focusSettingsOverlay">
       <label>Set Time (minutes): 
-        <input type="number" id="focusTimeInput" min="1" max="180" value="25" style="width:50px;">
+        <input type="number" id="focusTimeInput" min="1" max="180" value="25">
       </label>
-      <button onclick="updateFocusTime()" style="margin-left:4px;">Set</button>
+      <button onclick="updateFocusTime()">Apply</button>
     </div>
   </div>
 </div>
@@ -297,193 +1314,405 @@ iframe{width:100%;height:100%;border:none;border-radius:18px}
 <audio id="focusAlarm" src="https://www.soundjay.com/button/sounds/beep-07.mp3" preload="auto"></audio>
 
 <!-- STOPWATCH -->
-<div id="swWin" class="glass window scalable" style="top:120px;left:120px;width:220px">
+<div id="swWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Stopwatch</div>
+    <div class="window-controls">
+      <div class="window-btn maximize" onclick="maximizeWindow('swWin')"></div>
+      <div class="window-btn close" onclick="closeWindow('swWin')"></div>
+    </div>
+  </div>
   <div id="swContent">
-    <strong>Stopwatch</strong>
-    <div id="swTime" style="font-size:28px">0.0</div>
-    <button onclick="swStart()">Start</button>
-    <button onclick="swPause()">Pause</button>
-    <button onclick="swReset()">Reset</button>
+    <div id="swTime">00:00.0</div>
+    <div class="sw-buttons">
+      <button id="swStartBtn" onclick="swStart()">Start</button>
+      <button id="swPauseBtn" onclick="swPause()" style="display:none;">Pause</button>
+      <button onclick="swReset()">Reset</button>
+    </div>
   </div>
 </div>
 
 <!-- Background Selector -->
-<div id="bgWin" class="glass window scalable" style="top:60px;left:500px;width:300px">
-  <strong>Backgrounds</strong><br><br>
-  <div id="bgContainer"></div>
+<div id="bgWin" class="glass window" style="height:520px;width:340px;">
+  <div class="window-header">
+    <div class="window-title">Backgrounds</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('bgWin')"></div>
+    </div>
+  </div>
+  <div id="bgContainer" style="padding:10px;overflow-y:auto;height:calc(100% - 50px);"></div>
 </div>
 
 <!-- Settings Window -->
-<div id="settingsWin" class="glass window scalable" style="top:80px;left:600px;width:400px;height:500px">
-  <strong>Settings</strong>
-
-  <!-- Appearance -->
-  <div class="setting-section">
-    <h3>Appearance</h3>
-    Accent Color: <input type="color" id="accentInput"><br>
-    Font Size: <input type="number" min="12" max="48" value="16" id="fontSizeInput">px<br>
-    Theme: 
-    <select id="themeSelect">
-      <option value="dark">Dark</option>
-      <option value="light">Light</option>
-    </select>
+<div id="settingsWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Settings</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('settingsWin')"></div>
+    </div>
   </div>
+  <div class="settings-content">
+    
+    <!-- Account Profile Section -->
+    <div class="account-profile" id="accountProfile">
+      <div class="profile-picture-container">
+        <div class="profile-picture" id="profilePicture" onclick="openAccountModal()">
+          <span id="profileIcon">👤</span>
+          <input type="file" id="profilePictureInput" accept="image/*" style="display:none;" onchange="uploadProfilePicture(event)">
+          <div class="profile-picture-upload" onclick="event.stopPropagation(); document.getElementById('profilePictureInput').click()">
+            📷
+          </div>
+        </div>
+      </div>
+      <div class="profile-info">
+        <h2 class="profile-username" id="profileUsername">Guest User</h2>
+        <p class="profile-status" id="profileStatus">Not logged in</p>
+        <button class="profile-edit-btn" onclick="openAccountModal()">
+          <span id="accountBtnText">Login / Sign Up</span>
+        </button>
+      </div>
+    </div>
 
-  <!-- Taskbar -->
-  <div class="setting-section">
-    <h3>Taskbar</h3>
-    Auto-hide: <input type="checkbox" id="autoHideCheck"><br>
-    Icon size: <input type="number" min="24" max="64" value="42" id="iconSizeInput">px<br>
-    Position:
-    <select id="taskbarPos">
-      <option value="bottom" selected>Bottom</option>
-      <option value="top">Top</option>
-      <option value="left">Left</option>
-      <option value="right">Right</option>
-    </select>
-  </div>
+    <!-- Appearance -->
+    <div class="setting-section">
+      <h3>
+        <svg viewBox="0 0 24 24"><path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36c-0.98,1.37-2.58,2.26-4.4,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg>
+        Appearance
+      </h3>
+      <div class="setting-row">
+        <div class="setting-label">Accent Color</div>
+        <div class="setting-control">
+          <input type="color" id="accentInput" value="#7c5cff">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Font Size</div>
+        <div class="setting-control">
+          <input type="number" min="12" max="48" value="16" id="fontSizeInput">
+          <span class="range-value">px</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Theme</div>
+        <div class="setting-control">
+          <select id="themeSelect">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-  <!-- Windows -->
-  <div class="setting-section">
-    <h3>Windows</h3>
-    Show Clock: <input type="checkbox" id="showClock" checked><br>
-    Show Focus Timer: <input type="checkbox" id="showFocus" checked><br>
-    Show Stopwatch: <input type="checkbox" id="showStopwatch" checked>
-  </div>
+    <!-- Taskbar -->
+    <div class="setting-section">
+      <h3>
+        <svg viewBox="0 0 24 24"><path d="M3,13h2v-2H3V13z M3,17h2v-2H3V17z M3,9h2V7H3V9z M7,13h14v-2H7V13z M7,17h14v-2H7V17z M7,7v2h14V7H7z"/></svg>
+        Taskbar
+      </h3>
+      <div class="setting-row">
+        <div class="setting-label">Auto-hide</div>
+        <div class="setting-control">
+          <input type="checkbox" id="autoHideCheck">
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Icon Size</div>
+        <div class="setting-control">
+          <input type="number" min="24" max="64" value="42" id="iconSizeInput">
+          <span class="range-value">px</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Position</div>
+        <div class="setting-control">
+          <select id="taskbarPos">
+            <option value="bottom" selected>Bottom</option>
+            <option value="top">Top</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-  <!-- System -->
-  <div class="setting-section">
-    <h3>System</h3>
-    Blur: <input type="range" min="0" max="30" value="18" step="1" id="blurRange">px<br>
-    Background Opacity: <input type="range" min="0.1" max="1" step="0.05" value="0.45" id="bgOpacityRange">
+    <!-- Windows -->
+    <div class="setting-section">
+      <h3>
+        <svg viewBox="0 0 24 24"><path d="M3,3v8h8V3H3z M9,9H5V5h4V9z M3,13v8h8v-8H3z M9,19H5v-4h4V19z M13,3v8h8V3H13z M19,9h-4V5h4V9z M13,13v8h8v-8H13z M19,19h-4v-4h4V19z"/></svg>
+        Windows
+      </h3>
+      <div class="setting-row">
+        <div class="setting-label">Show Clock</div>
+        <div class="setting-control">
+          <input type="checkbox" id="showClock" checked>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Show Focus Timer</div>
+        <div class="setting-control">
+          <input type="checkbox" id="showFocus" checked>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Show Stopwatch</div>
+        <div class="setting-control">
+          <input type="checkbox" id="showStopwatch" checked>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Hide Widget Headers</div>
+        <div class="setting-control">
+          <input type="checkbox" id="hideHeaders">
+        </div>
+      </div>
+    </div>
+
+    <!-- System -->
+    <div class="setting-section">
+      <h3>
+        <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+        System
+      </h3>
+      <div class="setting-row">
+        <div class="setting-label">Blur</div>
+        <div class="setting-control">
+          <input type="range" min="0" max="30" value="18" step="1" id="blurRange">
+          <span class="range-value" id="blurValue">18px</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">Background Opacity</div>
+        <div class="setting-control">
+          <input type="range" min="0.1" max="1" step="0.05" value="0.45" id="bgOpacityRange">
+          <span class="range-value" id="opacityValue">0.45</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- More Widgets -->
-<div id="moreWidgets" class="glass window scalable" style="top:200px;left:200px;width:500px;height:400px">
-  <div style="text-align:center"><strong>More Widgets</strong></div>
+<div id="moreWidgets" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Widget Store</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('moreWidgets')"></div>
+    </div>
+  </div>
   <div class="widget-container">
-    <div class="widget-card" onclick="toggle('todoWin')">Todo</div>
-    <div class="widget-card" onclick="toggle('calWin')">Calendar</div>
-    <div class="widget-card" onclick="toggle('tableWin')">Table</div>
-    <div class="widget-card" onclick="toggle('spotifyWin')">Spotify</div>
-    <div class="widget-card" onclick="toggle('ytWin')">YouTube</div>
-    <div class="widget-card" onclick="toggle('slidesWin')">Google Slides</div>
-    <div class="widget-card" onclick="toggle('classroomWin')">Google Classroom</div>
-    <div class="widget-card" onclick="toggle('imageWin')">Image Viewer</div>
-    <div class="widget-card" onclick="toggle('textWin')">Text Writer</div>
-    <div class="widget-card" onclick="toggle('mp4Win')">MP4 Player</div>
-    <div class="widget-card" onclick="toggle('ytPlayerWin')">YouTube Player</div>
+    <div class="widget-card" draggable="true" data-widget="todoWin">
+      <svg viewBox="0 0 24 24"><path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M10,17l-5-5l1.41-1.41L10,14.17 l7.59-7.59L19,8L10,17z"/></svg>
+      <span>Todo</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="calWin">
+      <svg viewBox="0 0 24 24"><path d="M19,3h-1V1h-2v2H8V1H6v2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M19,19H5V9h14 V19z M7,11h2v2H7V11z M11,11h2v2h-2V11z M15,11h2v2h-2V11z"/></svg>
+      <span>Calendar</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="tableWin">
+      <svg viewBox="0 0 24 24"><path d="M10,10.02h5V21h-5V10.02z M17,21h3c1.1,0,2-0.9,2-2v-9h-5V21z M3,19c0,1.1,0.9,2,2,2h3V10H3V19z M3,5v3h18V5 c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5z"/></svg>
+      <span>Table</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="spotifyWin">
+      <svg viewBox="0 0 24 24"><path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M9.5,16.5c-0.83,0-1.5-0.67-1.5-1.5s0.67-1.5,1.5-1.5 s1.5,0.67,1.5,1.5S10.33,16.5,9.5,16.5z M12,13c-0.55,0-1-0.45-1-1s0.45-1,1-1s1,0.45,1,1S12.55,13,12,13z M14.5,16.5 c-0.83,0-1.5-0.67-1.5-1.5s0.67-1.5,1.5-1.5s1.5,0.67,1.5,1.5S15.33,16.5,14.5,16.5z"/></svg>
+      <span>Spotify</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="ytWin">
+      <svg viewBox="0 0 24 24"><path d="M10,16.5l6-4.5l-6-4.5V16.5z M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8 s3.59-8,8-8s8,3.59,8,8S16.41,20,12,20z"/></svg>
+      <span>YouTube</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="slidesWin">
+      <svg viewBox="0 0 24 24"><path d="M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3z M19,19H5V7h14V19z M7,10h2v7H7V10z M11,10h2v7h-2V10z M15,10h2v7h-2V10z"/></svg>
+      <span>Slides</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="classroomWin">
+      <svg viewBox="0 0 24 24"><path d="M12,3L1,9l4,2.18v6L12,21l7-3.82v-6l2-1.09V17h2V9L12,3z M18.82,9L12,12.72L5.18,9L12,5.28L18.82,9z M17,15.99l-5,2.73 l-5-2.73v-3.72L12,15l5-2.73V15.99z"/></svg>
+      <span>Classroom</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="imageWin">
+      <svg viewBox="0 0 24 24"><path d="M21,19V5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14C20.1,21,21,20.1,21,19z M8.5,13.5l2.5,3.01L14.5,12 l4.5,6H5L8.5,13.5z"/></svg>
+      <span>Image</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="textWin">
+      <svg viewBox="0 0 24 24"><path d="M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5 L18.5,9H13z"/></svg>
+      <span>Text</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="mp4Win">
+      <svg viewBox="0 0 24 24"><path d="M17,10.5V7c0-0.55-0.45-1-1-1H4C3.45,6,3,6.45,3,7v10c0,0.55,0.45,1,1,1h12c0.55,0,1-0.45,1-1v-3.5l4,4v-11L17,10.5z"/></svg>
+      <span>MP4</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="ytPlayerWin">
+      <svg viewBox="0 0 24 24"><path d="M21,3H3C1.9,3,1,3.9,1,5v14c0,1.1,0.9,2,2,2h18c1.1,0,2-0.9,2-2V5C23,3.9,22.1,3,21,3z M10,15V9l6,3L10,15z"/></svg>
+      <span>YT Player</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
   </div>
 </div>
 
 <!-- Todo -->
-<div id="todoWin" class="glass window" style="top:160px;left:160px;width:260px">
-  <strong>Todo</strong>
-  <input id="todoInput" placeholder="Add task">
+<div id="todoWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Todo List</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('todoWin')"></div>
+    </div>
+  </div>
+  <input id="todoInput" placeholder="Add new task...">
   <ul id="todoList"></ul>
 </div>
 
 <!-- Calendar -->
-<div id="calWin" class="glass window scalable" style="top:200px;left:200px;width:220px">
-  <strong>Calendar</strong>
+<div id="calWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Calendar</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('calWin')"></div>
+    </div>
+  </div>
   <input type="date">
 </div>
 
 <!-- Table -->
-<div id="tableWin" class="glass window" style="top:240px;left:240px;width:260px">
-  <strong>Table</strong>
-  <table id="tbl"><tr><td>A</td><td>B</td></tr><tr><td>1</td><td>2</td></tr></table>
+<div id="tableWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Table</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('tableWin')"></div>
+    </div>
+  </div>
+  <table id="tbl">
+    <tr><td>A</td><td>B</td></tr>
+    <tr><td>1</td><td>2</td></tr>
+  </table>
 </div>
 
 <!-- iFrame Widgets -->
-<div id="spotifyWin" class="glass window iframeWin" style="top:100px;left:420px">
-  <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M"></iframe>
+<div id="spotifyWin" class="glass window iframeWin">
+  <div class="window-header">
+    <div class="window-title">Spotify</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('spotifyWin')"></div>
+    </div>
+  </div>
+  <div style="width:100%;height:calc(100% - 40px);">
+    <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="width:100%;height:100%;border:none;border-radius:0 0 18px 18px;"></iframe>
+  </div>
 </div>
-<div id="ytWin" class="glass window iframeWin" style="top:140px;left:460px">
-  <iframe src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+<div id="ytWin" class="glass window iframeWin">
+  <div class="window-header">
+    <div class="window-title">YouTube</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('ytWin')"></div>
+    </div>
+  </div>
+  <div style="width:100%;height:calc(100% - 40px);">
+    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen style="width:100%;height:100%;border:none;border-radius:0 0 18px 18px;"></iframe>
+  </div>
 </div>
-<div id="slidesWin" class="glass window iframeWin" style="top:180px;left:500px">
-  <iframe src="YOUR_PUBLISHED_SLIDES_IFRAME_URL"></iframe>
+<div id="slidesWin" class="glass window iframeWin">
+  <div class="window-header">
+    <div class="window-title">Google Slides</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('slidesWin')"></div>
+    </div>
+  </div>
+  <div style="width:100%;height:calc(100% - 40px);">
+    <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQrfJvSample/embed" style="width:100%;height:100%;border:none;border-radius:0 0 18px 18px;"></iframe>
+  </div>
 </div>
-<div id="classroomWin" class="glass window iframeWin" style="top:220px;left:540px">
-  <iframe src="https://classroom.google.com"></iframe>
+<div id="classroomWin" class="glass window iframeWin">
+  <div class="window-header">
+    <div class="window-title">Google Classroom</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('classroomWin')"></div>
+    </div>
+  </div>
+  <div style="width:100%;height:calc(100% - 40px);">
+    <iframe src="https://classroom.google.com" style="width:100%;height:100%;border:none;border-radius:0 0 18px 18px;"></iframe>
+  </div>
 </div>
 
 <!-- Image Viewer -->
-<div id="imageWin" class="glass window scalable" style="top:260px;left:580px;width:300px;height:220px">
-  <strong>Image Viewer</strong>
-  <input type="file" id="imgInput" accept="image/*"><br><br>
-  <img id="imgDisplay" style="width:100%;height:150px;object-fit:contain;border-radius:12px;">
+<div id="imageWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Image Viewer</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('imageWin')"></div>
+    </div>
+  </div>
+  <input type="file" id="imgInput" accept="image/*">
+  <img id="imgDisplay" alt="No image selected">
 </div>
 
 <!-- YouTube Player Widget -->
-<div id="ytPlayerWin" class="glass window scalable" style="top:300px;left:740px;width:420px;height:320px">
-  
-  <!-- YouTube iframe -->
-  <div style="width:100%;height:220px;border-radius:16px;overflow:hidden;background:#000;">
-    <iframe id="ytPlayerIframe"
-      style="width:100%;height:100%;border:none;"
-      allowfullscreen
-      src="">
-    </iframe>
+<div id="ytPlayerWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">YouTube Player</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('ytPlayerWin')"></div>
+    </div>
   </div>
-
-  <!-- URL input -->
-  <input type="text" id="ytPlayerInput" placeholder="Paste YouTube link here" style="width:100%;margin-top:10px">
-
-  <button onclick="loadYTVideo()" style="margin-top:6px;width:100%">Load</button>
-
-  <!-- Optional: Fullscreen button -->
-  <button onclick="fullscreenYT()" style="margin-top:6px;width:100%">Fullscreen</button>
+  <div class="yt-container">
+    <iframe id="ytPlayerIframe" allowfullscreen src=""></iframe>
+  </div>
+  <input type="text" id="ytPlayerInput" placeholder="Paste YouTube link here">
+  <div class="yt-buttons">
+    <button onclick="loadYTVideo()">Load Video</button>
+    <button onclick="fullscreenYT()">Fullscreen</button>
+  </div>
 </div>
 
 <!-- MP4 Player -->
-<div id="mp4Win" class="glass window scalable" style="top:180px;left:700px;width:420px;height:320px">
-  <video id="mp4Video" src="" style="width:100%;height:220px;border-radius:16px;object-fit:cover" controlslist="nodownload"></video>
-
-  <!-- Controls -->
-  <div style="
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:16px;
-    margin-top:12px;
-  ">
-    <button onclick="skipVideo(-5)"><</button>
-
-    <button id="playPauseBtn"
-      onclick="togglePlay()"
-      style="
-        width:54px;
-        height:54px;
-        border-radius:50%;
-        font-size:22px;
-      ">▶</button>
-
-    <button onclick="skipVideo(5)">></button>
+<div id="mp4Win" class="glass window">
+  <div class="window-header">
+    <div class="window-title">MP4 Player</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('mp4Win')"></div>
+    </div>
   </div>
-
-  <!-- Bottom Controls -->
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+  <video id="mp4Video" src="" controlslist="nodownload"></video>
+  <div class="video-controls">
+    <button onclick="skipVideo(-5)">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M11,18V6l-8.5,6L11,18z M11.5,12l8.5,6V6L11.5,12z"/></svg>
+    </button>
+    <button id="playPauseBtn" onclick="togglePlay()">
+      <svg id="playIcon" viewBox="0 0 24 24"><path d="M8,5v14l11-7L8,5z"/></svg>
+    </button>
+    <button onclick="skipVideo(5)">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M4,18l8.5-6L4,6V18z M13,6v12l8.5-6L13,6z"/></svg>
+    </button>
+  </div>
+  <div class="video-bottom">
     <select onchange="setSpeed(this.value)">
       <option value="0.5">0.5×</option>
       <option value="1" selected>1×</option>
       <option value="1.5">1.5×</option>
       <option value="2">2×</option>
     </select>
-
-    <button onclick="fullscreenVideo()">⛶</button>
+    <button onclick="fullscreenVideo()">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:white"><path d="M7,14H5v5h5v-2H7V14z M5,10h2V7h3V5H5V10z M17,17h-3v2h5v-5h-2V17z M14,5v2h3v3h2V5H14z"/></svg>
+    </button>
   </div>
-
-  <input type="file" accept="video/mp4" onchange="loadVideo(this)" style="margin-top:10px">
+  <input type="file" accept="video/mp4" onchange="loadVideo(this)">
 </div>
 
 <!-- Text Writer Widget -->
-<div id="textWin" class="glass window scalable" style="top:300px;left:620px;width:300px;height:220px">
-  <strong>Text Writer</strong>
-
-  <!-- Typing Toolbar (positioned above textarea) -->
+<div id="textWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Text Writer</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('textWin')"></div>
+    </div>
+  </div>
   <div id="typingToolbar">
     <select id="fontSizeSelect">
       <option value="14">14px</option>
@@ -495,18 +1724,100 @@ iframe{width:100%;height:100%;border:none;border-radius:18px}
     <button id="boldBtn" class="bold">B</button>
     <button id="italicBtn" class="italic">I</button>
   </div>
+  <textarea id="textArea" placeholder="Start writing..."></textarea>
+</div>
 
-  <textarea id="textArea" placeholder="Write anything..." style="height:150px;margin-top:10px;"></textarea>
+<!-- Account Settings Modal -->
+<div id="accountModal" class="account-modal">
+  <div class="account-modal-content">
+    <div class="account-modal-header">
+      <h2 id="accountModalTitle">Account Settings</h2>
+      <button class="account-modal-close" onclick="closeAccountModal()">✕</button>
+    </div>
+    
+    <!-- Login/Signup Form -->
+    <div id="loginForm">
+      <div class="account-form-group">
+        <label>Username</label>
+        <input type="text" id="usernameInput" placeholder="Enter username">
+      </div>
+      <div class="account-form-group">
+        <label>Password</label>
+        <input type="password" id="passwordInput" placeholder="Enter password">
+      </div>
+      <button class="account-save-btn" onclick="loginAccount()">Login / Sign Up</button>
+    </div>
+    
+    <!-- Edit Form (shown when logged in) -->
+    <div id="editForm" style="display:none;">
+      <div class="account-form-group">
+        <label>Username</label>
+        <input type="text" id="editUsernameInput" placeholder="Enter new username">
+      </div>
+      <div class="account-form-group">
+        <label>New Password (leave blank to keep current)</label>
+        <input type="password" id="editPasswordInput" placeholder="Enter new password">
+      </div>
+      <button class="account-save-btn" onclick="updateAccount()" style="margin-bottom:10px;">Save Changes</button>
+      <button class="account-save-btn" onclick="logoutAccount()" style="background:#ff5f57;">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Assistant -->
+<div id="aiAssistant">
+  <button class="ai-close-btn" onclick="closeAI()">✕</button>
+  
+  <div class="ai-orb">🤖</div>
+  
+  <div class="ai-chat-container">
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-message assistant">
+        Hi! I'm your AI assistant. How can I help you today?
+      </div>
+    </div>
+    
+    <div class="ai-typing" id="aiTyping">
+      <div class="typing-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    
+    <div class="ai-input-container">
+      <input 
+        type="text" 
+        class="ai-input" 
+        id="aiInput" 
+        placeholder="Ask me anything..."
+        onkeypress="if(event.key==='Enter') sendAIMessage()"
+      >
+      <button class="ai-send-btn" onclick="sendAIMessage()">Send</button>
+    </div>
+  </div>
 </div>
 
 <!-- Taskbar -->
 <div id="taskbar" class="glass">
-  <div class="task-btn" onclick="toggle('clockWin')">🕒</div>
-  <div class="task-btn" onclick="toggle('focusWin')">⏳</div>
-  <div class="task-btn" onclick="toggle('swWin')">⏱️</div>
-  <div class="task-btn" onclick="toggle('moreWidgets')">➕</div>
-  <div class="task-btn" onclick="toggle('bgWin')">🖼️</div>
-  <div class="task-btn" onclick="toggle('settingsWin')">⚙️</div>
+  <div class="task-btn" onclick="toggle('clockWin')" title="Clock">
+    <svg viewBox="0 0 24 24"><path d="M11.99,2C6.47,2,2,6.48,2,12s4.47,10,9.99,10C17.52,22,22,17.52,22,12S17.52,2,11.99,2z M12,20c-4.42,0-8-3.58-8-8 s3.58-8,8-8s8,3.58,8,8S16.42,20,12,20z M12.5,7H11v6l5.25,3.15l0.75-1.23l-4.5-2.67V7z"/></svg>
+  </div>
+  <div class="task-btn" onclick="toggle('focusWin')" title="Focus Timer">
+    <svg viewBox="0 0 24 24"><path d="M6,2v6h0.01L6,8.01L10,12l-4,4l0.01,0.01H6V22h12v-5.99h-0.01L18,16l-4-4l4-3.99l-0.01-0.01H18V2H6z M16,16.5 c0,0.83-0.67,1.5-1.5,1.5S13,17.33,13,16.5s0.67-1.5,1.5-1.5S16,15.67,16,16.5z"/></svg>
+  </div>
+  <div class="task-btn" onclick="toggle('swWin')" title="Stopwatch">
+    <svg viewBox="0 0 24 24"><path d="M15,1H9v2h6V1z M11,14h2V8h-2V14z M19.03,7.39l1.42-1.42c-0.43-0.51-0.9-0.99-1.41-1.41l-1.42,1.42 C16.07,4.74,14.12,4,12,4c-4.97,0-9,4.03-9,9s4.02,9,9,9s9-4.03,9-9C21,10.88,20.26,8.93,19.03,7.39z M12,20c-3.87,0-7-3.13-7-7 s3.13-7,7-7s7,3.13,7,7S15.87,20,12,20z"/></svg>
+  </div>
+  <div class="task-btn" onclick="toggle('moreWidgets')" title="More Widgets">
+    <svg viewBox="0 0 24 24"><path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"/></svg>
+  </div>
+  <div class="task-btn" onclick="toggle('bgWin')" title="Backgrounds">
+    <svg viewBox="0 0 24 24"><path d="M21,19V5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14C20.1,21,21,20.1,21,19z M8.5,13.5l2.5,3.01L14.5,12 l4.5,6H5L8.5,13.5z"/></svg>
+  </div>
+  <div class="task-btn" onclick="toggle('settingsWin')" title="Settings">
+    <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+  </div>
 </div>
 
 <script>
@@ -516,283 +1827,937 @@ window.addEventListener("load", () => {
   setTimeout(() => { loader.classList.add("hidden"); }, 600);
 });
 
-// ---------- Toggle ----------
-function toggle(id){
-  const w=document.getElementById(id);
-  if(!w)return;
-  w.style.display=w.style.display==="block"?"none":"block";
-  w.classList.remove("pop"); void w.offsetWidth; w.classList.add("pop");
+// ---------- Window Management ----------
+let zIndexCounter = 100;
+
+function toggle(id) {
+  const w = document.getElementById(id);
+  console.log("Toggle called for:", id);
+  console.log("Element found:", w);
+  
+  if (!w) {
+    console.error("Window not found:", id);
+    return;
+  }
+  
+  if (w.style.display === "block") {
+    w.style.display = "none";
+    console.log("Hiding window:", id);
+  } else {
+    w.style.display = "block";
+    w.classList.remove("pop");
+    void w.offsetWidth;
+    w.classList.add("pop");
+    bringToFront(w);
+    console.log("Showing window:", id);
+  }
+}
+
+function closeWindow(id) {
+  const w = document.getElementById(id);
+  if (w) w.style.display = "none";
+}
+
+function minimizeWindow(id) {
+  const w = document.getElementById(id);
+  if (w) w.style.display = "none";
+}
+
+function maximizeWindow(id) {
+  const w = document.getElementById(id);
+  if (!w) return;
+  
+  if (w.dataset.maximized === "true") {
+    // Restore
+    w.style.width = w.dataset.oldWidth;
+    w.style.height = w.dataset.oldHeight;
+    w.style.left = w.dataset.oldLeft;
+    w.style.top = w.dataset.oldTop;
+    w.dataset.maximized = "false";
+  } else {
+    // Maximize
+    w.dataset.oldWidth = w.style.width;
+    w.dataset.oldHeight = w.style.height;
+    w.dataset.oldLeft = w.style.left;
+    w.dataset.oldTop = w.style.top;
+    w.style.width = "calc(100vw - 40px)";
+    w.style.height = "calc(100vh - 40px)";
+    w.style.left = "20px";
+    w.style.top = "20px";
+    w.dataset.maximized = "true";
+  }
+}
+
+function bringToFront(win) {
+  win.style.zIndex = ++zIndexCounter;
 }
 
 // ---------- Clock ----------
-setInterval(()=>{
-  const d=new Date();
-  clockTime.textContent=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  clockSeconds.textContent=d.getSeconds().toString().padStart(2,"0");
-  clockDate.textContent=d.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
-},100);
+function updateClock() {
+  const d = new Date();
+  clockTime.textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  clockSeconds.textContent = d.getSeconds().toString().padStart(2, "0");
+  clockDate.textContent = d.toLocaleDateString(undefined, {weekday:"long", month:"long", day:"numeric"});
+}
+setInterval(updateClock, 100);
+updateClock();
+
+// ---------- Text Writer ----------
 const textArea = document.getElementById("textArea");
-const toolbar = document.getElementById("typingToolbar");
 const fontSelect = document.getElementById("fontSizeSelect");
 const boldBtn = document.getElementById("boldBtn");
 const italicBtn = document.getElementById("italicBtn");
 
-// Font size change
 fontSelect.addEventListener("change", () => {
   textArea.style.fontSize = fontSelect.value + "px";
 });
 
-// Bold toggle
 boldBtn.addEventListener("click", () => {
   textArea.style.fontWeight = textArea.style.fontWeight === "bold" ? "normal" : "bold";
   boldBtn.classList.toggle("active");
 });
 
-// Italic toggle
 italicBtn.addEventListener("click", () => {
   textArea.style.fontStyle = textArea.style.fontStyle === "italic" ? "normal" : "italic";
   italicBtn.classList.toggle("active");
 });
 
-// ---------- Focus ----------
-let ft = 1500, fr = null; // default 25 minutes
+// ---------- Focus Timer ----------
+let ft = 1500; // 25 minutes in seconds
+let initialFt = 1500;
+let fr = null;
 const focusTimeDisplay = document.getElementById("focusTime");
 const focusAlarm = document.getElementById("focusAlarm");
 
-// Update the displayed time
-function updateFocus() {
-  const minutes = Math.floor(ft / 60).toString().padStart(2,"0");
-  const seconds = (ft % 60).toString().padStart(2,"0");
+function updateFocusDisplay() {
+  const minutes = Math.floor(ft / 60).toString().padStart(2, "0");
+  const seconds = (ft % 60).toString().padStart(2, "0");
   focusTimeDisplay.textContent = `${minutes}:${seconds}`;
 }
 
-// Start the timer
 function startFocus() {
-  clearInterval(fr);
+  if (fr) return; // Already running
   fr = setInterval(() => {
-    if(ft > 0){
+    if (ft > 0) {
       ft--;
-      updateFocus();
+      updateFocusDisplay();
     } else {
       clearInterval(fr);
-      // Play alarm
+      fr = null;
       focusAlarm.currentTime = 0;
       focusAlarm.play();
-      // Stop alarm after 5 seconds
       setTimeout(() => { focusAlarm.pause(); }, 5000);
     }
   }, 1000);
 }
 
-// Pause the timer
 function pauseFocus() {
-  clearInterval(fr);
-}
-
-// ---------- Settings Button ----------
-const focusSettingsBtn = document.getElementById("focusSettingsBtn");
-const focusSettingsOverlay = document.getElementById("focusSettingsOverlay");
-focusSettingsBtn.addEventListener("click", () => {
-  focusSettingsOverlay.style.display = focusSettingsOverlay.style.display === "block" ? "none" : "block";
-});
-
-// ---------- Update Focus Time ----------
-function updateFocusTime(){
-  const newTime = parseInt(document.getElementById("focusTimeInput").value);
-  if(!isNaN(newTime) && newTime > 0){
-    ft = newTime * 60; // convert minutes to seconds
-    updateFocus();
+  if (fr) {
+    clearInterval(fr);
+    fr = null;
   }
 }
+
+function resetFocus() {
+  pauseFocus();
+  ft = initialFt;
+  updateFocusDisplay();
+}
+
+function toggleFocusSettings() {
+  const overlay = document.getElementById("focusSettingsOverlay");
+  overlay.style.display = overlay.style.display === "block" ? "none" : "block";
+}
+
+function updateFocusTime() {
+  const newTime = parseInt(document.getElementById("focusTimeInput").value);
+  if (!isNaN(newTime) && newTime > 0) {
+    initialFt = newTime * 60;
+    ft = initialFt;
+    updateFocusDisplay();
+    toggleFocusSettings();
+  }
+}
+
+updateFocusDisplay();
 
 // ---------- Stopwatch ----------
-let sw=0,si=null;
-function swStart(){if(!si)si=setInterval(()=>{sw+=.1;swTime.textContent=sw.toFixed(1)},100)}
-function swPause(){clearInterval(si);si=null}
-function swReset(){swPause();sw=0;swTime.textContent="0.0"}
+let sw = 0;
+let si = null;
+let swStartTime = 0;
+let swElapsed = 0;
 
-// ---------- Todo ----------
-todoInput.onkeydown=e=>{
-  if(e.key==="Enter"&&e.target.value){
-    const li=document.createElement("li");
-    li.textContent=e.target.value;
-    todoList.appendChild(li);
-    e.target.value="";
+function formatStopwatchTime(milliseconds) {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const deciseconds = Math.floor((milliseconds % 1000) / 100);
+  
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${deciseconds}`;
+}
+
+function swStart() {
+  if (!si) {
+    swStartTime = Date.now() - swElapsed;
+    si = setInterval(() => {
+      swElapsed = Date.now() - swStartTime;
+      document.getElementById('swTime').textContent = formatStopwatchTime(swElapsed);
+    }, 100);
+    
+    // Update button visibility
+    document.getElementById('swStartBtn').style.display = 'none';
+    document.getElementById('swPauseBtn').style.display = 'block';
   }
 }
 
-// ---------- Image Viewer ----------
-imgInput.onchange=e=>{
-  const file=e.target.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=f=>imgDisplay.src=f.target.result;
-  reader.readAsDataURL(file);
+function swPause() {
+  if (si) {
+    clearInterval(si);
+    si = null;
+    
+    // Update button visibility
+    document.getElementById('swStartBtn').style.display = 'block';
+    document.getElementById('swPauseBtn').style.display = 'none';
+  }
 }
+
+function swReset() {
+  swPause();
+  swElapsed = 0;
+  swStartTime = 0;
+  document.getElementById('swTime').textContent = '00:00.0';
+  
+  // Reset button visibility
+  document.getElementById('swStartBtn').style.display = 'block';
+  document.getElementById('swPauseBtn').style.display = 'none';
+}
+
+// ---------- Todo ----------
+const todoInput = document.getElementById("todoInput");
+const todoList = document.getElementById("todoList");
+
+todoInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.value.trim()) {
+    const li = document.createElement("li");
+    li.textContent = e.target.value;
+    li.onclick = function() {
+      this.style.textDecoration = this.style.textDecoration === "line-through" ? "none" : "line-through";
+      this.style.opacity = this.style.textDecoration === "line-through" ? "0.5" : "1";
+    };
+    todoList.appendChild(li);
+    e.target.value = "";
+  }
+});
+
+// ---------- Image Viewer ----------
+const imgInput = document.getElementById("imgInput");
+const imgDisplay = document.getElementById("imgDisplay");
+
+imgInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = f => imgDisplay.src = f.target.result;
+  reader.readAsDataURL(file);
+});
 
 // ---------- MP4 Video ----------
 const video = document.getElementById("mp4Video");
-const playBtn = document.getElementById("playPauseBtn");
-function loadVideo(input){const file=input.files[0];if(!file)return;video.src=URL.createObjectURL(file);video.load();}
-function togglePlay(){if(video.paused){video.play();playBtn.textContent="||";}else{video.pause();playBtn.textContent="▶";}}
-function skipVideo(sec){video.currentTime+=sec;}
-function setSpeed(speed){video.playbackRate=speed;}
-function fullscreenVideo(){if(video.requestFullscreen)video.requestFullscreen();}
+const playIcon = document.getElementById("playIcon");
+
+function loadVideo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  video.src = URL.createObjectURL(file);
+  video.load();
+}
+
+function togglePlay() {
+  if (video.paused) {
+    video.play();
+    playIcon.innerHTML = '<path d="M6,4h4v16H6V4z M14,4h4v16h-4V4z"/>';
+  } else {
+    video.pause();
+    playIcon.innerHTML = '<path d="M8,5v14l11-7L8,5z"/>';
+  }
+}
+
+function skipVideo(sec) {
+  video.currentTime += sec;
+}
+
+function setSpeed(speed) {
+  video.playbackRate = parseFloat(speed);
+}
+
+function fullscreenVideo() {
+  if (video.requestFullscreen) video.requestFullscreen();
+  else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+}
+
+// ---------- YouTube Player ----------
+function loadYTVideo() {
+  const url = document.getElementById("ytPlayerInput").value;
+  let videoId = "";
+  
+  // Extract video ID from various YouTube URL formats
+  if (url.includes("youtube.com/watch?v=")) {
+    videoId = url.split("v=")[1].split("&")[0];
+  } else if (url.includes("youtu.be/")) {
+    videoId = url.split("youtu.be/")[1].split("?")[0];
+  } else if (url.includes("youtube.com/embed/")) {
+    videoId = url.split("embed/")[1].split("?")[0];
+  }
+  
+  if (videoId) {
+    document.getElementById("ytPlayerIframe").src = `https://www.youtube.com/embed/${videoId}`;
+  } else {
+    alert("Please enter a valid YouTube URL");
+  }
+}
+
+function fullscreenYT() {
+  const iframe = document.getElementById("ytPlayerIframe");
+  if (iframe.requestFullscreen) iframe.requestFullscreen();
+  else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+}
+
+
+// ---------- Account System ----------
+let currentUser = null;
+
+// Load account data on page load
+function loadAccount() {
+  const savedUser = localStorage.getItem('focusOS_user');
+  if (savedUser) {
+    currentUser = JSON.parse(savedUser);
+    updateProfileDisplay();
+  }
+}
+
+function updateProfileDisplay() {
+  const profileUsername = document.getElementById('profileUsername');
+  const profileStatus = document.getElementById('profileStatus');
+  const profileIcon = document.getElementById('profileIcon');
+  const accountBtnText = document.getElementById('accountBtnText');
+  const profilePicture = document.getElementById('profilePicture');
+  
+  if (currentUser) {
+    profileUsername.textContent = currentUser.username;
+    profileStatus.textContent = 'Logged in';
+    accountBtnText.textContent = 'Edit Profile';
+    
+    // Show profile picture if exists
+    if (currentUser.profilePicture) {
+      profileIcon.innerHTML = `<img src="${currentUser.profilePicture}" alt="Profile">`;
+    } else {
+      profileIcon.textContent = currentUser.username.charAt(0).toUpperCase();
+    }
+  } else {
+    profileUsername.textContent = 'Guest User';
+    profileStatus.textContent = 'Not logged in';
+    accountBtnText.textContent = 'Login / Sign Up';
+    profileIcon.textContent = '👤';
+  }
+}
+
+function openAccountModal() {
+  const modal = document.getElementById('accountModal');
+  const loginForm = document.getElementById('loginForm');
+  const editForm = document.getElementById('editForm');
+  const modalTitle = document.getElementById('accountModalTitle');
+  
+  if (currentUser) {
+    // Show edit form
+    loginForm.style.display = 'none';
+    editForm.style.display = 'block';
+    modalTitle.textContent = 'Edit Profile';
+    document.getElementById('editUsernameInput').value = currentUser.username;
+    document.getElementById('editPasswordInput').value = '';
+  } else {
+    // Show login form
+    loginForm.style.display = 'block';
+    editForm.style.display = 'none';
+    modalTitle.textContent = 'Login / Sign Up';
+    document.getElementById('usernameInput').value = '';
+    document.getElementById('passwordInput').value = '';
+  }
+  
+  modal.classList.add('active');
+}
+
+function closeAccountModal() {
+  document.getElementById('accountModal').classList.remove('active');
+}
+
+function loginAccount() {
+  const username = document.getElementById('usernameInput').value.trim();
+  const password = document.getElementById('passwordInput').value;
+  
+  if (!username || !password) {
+    alert('Please enter both username and password');
+    return;
+  }
+  
+  // In a real app, this would validate against a server
+  // For now, we just create/login the user
+  currentUser = {
+    username: username,
+    password: password, // In production, NEVER store plain passwords!
+    profilePicture: null,
+    createdAt: new Date().toISOString()
+  };
+  
+  localStorage.setItem('focusOS_user', JSON.stringify(currentUser));
+  updateProfileDisplay();
+  closeAccountModal();
+  
+  // Show success message
+  showNotification(`Welcome, ${username}!`);
+}
+
+function updateAccount() {
+  const newUsername = document.getElementById('editUsernameInput').value.trim();
+  const newPassword = document.getElementById('editPasswordInput').value;
+  
+  if (!newUsername) {
+    alert('Username cannot be empty');
+    return;
+  }
+  
+  currentUser.username = newUsername;
+  
+  // Only update password if a new one was entered
+  if (newPassword) {
+    currentUser.password = newPassword;
+  }
+  
+  localStorage.setItem('focusOS_user', JSON.stringify(currentUser));
+  updateProfileDisplay();
+  closeAccountModal();
+  
+  showNotification('Profile updated successfully!');
+}
+
+function logoutAccount() {
+  if (confirm('Are you sure you want to logout?')) {
+    currentUser = null;
+    localStorage.removeItem('focusOS_user');
+    updateProfileDisplay();
+    closeAccountModal();
+    showNotification('Logged out successfully');
+  }
+}
+
+function uploadProfilePicture(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  if (!currentUser) {
+    alert('Please login first to upload a profile picture');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentUser.profilePicture = e.target.result;
+    localStorage.setItem('focusOS_user', JSON.stringify(currentUser));
+    updateProfileDisplay();
+    showNotification('Profile picture updated!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function showNotification(message) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--blur);
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 10002;
+    animation: slideIn 0.3s ease;
+  `;
+  notification.textContent = message;
+  document.body.appendChild(notification);
+  
+  // Remove after 3 seconds
+  setTimeout(() => {
+    notification.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Load account on page load
+document.addEventListener('DOMContentLoaded', loadAccount);
+
+// ---------- AI Assistant ----------
+let aiActive = false;
+
+// Press 'G' to open AI
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'g' || e.key === 'G') {
+    if (!aiActive && !e.target.matches('input, textarea')) {
+      openAI();
+    }
+  }
+  // ESC to close AI
+  if (e.key === 'Escape' && aiActive) {
+    closeAI();
+  }
+});
+
+function openAI() {
+  aiActive = true;
+  document.getElementById('aiAssistant').classList.add('active');
+  document.body.classList.add('ai-active');
+  document.getElementById('aiInput').focus();
+}
+
+function closeAI() {
+  aiActive = false;
+  document.getElementById('aiAssistant').classList.remove('active');
+  document.body.classList.remove('ai-active');
+}
+
+async function sendAIMessage() {
+  const input = document.getElementById('aiInput');
+  const message = input.value.trim();
+  
+  if (!message) return;
+  
+  // Add user message
+  const messagesDiv = document.getElementById('aiMessages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-message user';
+  userMsg.textContent = message;
+  messagesDiv.appendChild(userMsg);
+  
+  // Clear input
+  input.value = '';
+  
+  // Show typing indicator
+  document.getElementById('aiTyping').classList.add('active');
+  
+  // Scroll to bottom
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+  // Simulate AI response (you can integrate with real AI API here)
+  setTimeout(() => {
+    document.getElementById('aiTyping').classList.remove('active');
+    
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-message assistant';
+    
+    // Simple responses based on keywords
+    let response = "I understand your question. ";
+    
+    if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
+      response = "Hello! How can I assist you today?";
+    } else if (message.toLowerCase().includes('time')) {
+      response = `The current time is ${new Date().toLocaleTimeString()}.`;
+    } else if (message.toLowerCase().includes('date')) {
+      response = `Today is ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
+    } else if (message.toLowerCase().includes('help')) {
+      response = "I can help you with various tasks like telling you the time, date, or answering general questions. Try asking me something!";
+    } else if (message.toLowerCase().includes('weather')) {
+      response = "I don't have access to real-time weather data, but you can check your local weather service for accurate information.";
+    } else if (message.toLowerCase().includes('thank')) {
+      response = "You're welcome! Let me know if you need anything else.";
+    } else {
+      response = "That's an interesting question! I'm a simple AI assistant built into this OS. For more complex queries, you might want to integrate a more advanced AI service.";
+    }
+    
+    aiMsg.textContent = response;
+    messagesDiv.appendChild(aiMsg);
+    
+    // Scroll to bottom
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }, 1000 + Math.random() * 1000);
+}
 
 // ---------- Backgrounds ----------
-const bgs=[
- {url:"https://images.unsplash.com/photo-1501785888041-af3ef285b470",name:"Nature"},
- {url:"https://images.unsplash.com/photo-1497215842964-222b430dc094",name:"City"},
- {url:"https://images.unsplash.com/photo-1519681393784-d120267933ba",name:"Night"},
- {url:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", name:"Mountains"},
- {url:"https://images.unsplash.com/photo-1472214103451-9374bd1c798e", name:"Forest"},
- {url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e", name:"Ocean"},
- {url:"https://images.unsplash.com/photo-1519125323398-675f0ddb6308", name:"Abstract"},
- {url:"https://images.unsplash.com/photo-1505678261036-a3fcc5e884ee", name:"Space"},
- {url:"https://images.unsplash.com/photo-1465101162946-4377e57745c3", name:"Beach"},
- {url:"https://images.unsplash.com/photo-1470770903676-69b98201ea1c", name:"Road"},
+const bgs = [
+  {url:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4", name:"Snowy Mountains"},
+  {url:"https://images.unsplash.com/photo-1522673607200-164d1b6ce486", name:"Cherry Blossoms"},
+  {url:"https://images.unsplash.com/photo-1501594907352-04cda38ebc29", name:"Sunset Lake"},
+  {url:"https://images.unsplash.com/photo-1519681393784-d120267933ba", name:"Mountain Stars"},
+  {url:"https://images.unsplash.com/photo-1511884642898-4c92249e20b6", name:"Tropical Beach"},
+  {url:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e", name:"Forest Path"},
+  {url:"https://images.unsplash.com/photo-1470252649378-9c29740c9fa8", name:"Misty Valley"},
+  {url:"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b", name:"Rocky Peaks"},
+  {url:"https://images.unsplash.com/photo-1482938289607-e9573fc25ebb", name:"Autumn Trees"},
+  {url:"https://images.unsplash.com/photo-1469474968028-56623f02e42e", name:"Northern Lights"},
+  {url:"https://images.unsplash.com/photo-1501785888041-af3ef285b470", name:"Nature"},
+  {url:"https://images.unsplash.com/photo-1497215842964-222b430dc094", name:"City"},
+  {url:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", name:"Mountains"},
+  {url:"https://images.unsplash.com/photo-1472214103451-9374bd1c798e", name:"Forest"},
+  {url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e", name:"Ocean"},
+  {url:"https://images.unsplash.com/photo-1519125323398-675f0ddb6308", name:"Abstract"},
+  {url:"https://images.unsplash.com/photo-1505678261036-a3fcc5e884ee", name:"Space"},
+  {url:"https://images.unsplash.com/photo-1465101162946-4377e57745c3", name:"Beach"},
+  {url:"https://images.unsplash.com/photo-1470770903676-69b98201ea1c", name:"Road"},
+  {url:"https://images.unsplash.com/photo-1518837695005-2083093ee35b", name:"Waterfall"},
 ];
-const bgContainer=document.getElementById("bgContainer");
-bgs.forEach(bg=>{
-  const div=document.createElement("div");
-  div.className="bgPreview";
-  div.style.backgroundImage=`url(${bg.url})`;
-  div.title=bg.name;
-  div.onclick=()=>document.body.style.background=`url(${bg.url}) center/cover no-repeat`;
-  bgContainer.appendChild(div);
+
+function initBackgrounds() {
+  const bgContainer = document.getElementById("bgContainer");
+  console.log("Background container:", bgContainer);
+  
+  if (bgContainer) {
+    // Clear any existing content
+    bgContainer.innerHTML = '';
+    
+    bgs.forEach((bg, index) => {
+      const div = document.createElement("div");
+      div.className = "bgPreview";
+      div.style.backgroundImage = `url(${bg.url})`;
+      div.title = bg.name;
+      div.onclick = function() {
+        console.log("Background clicked:", bg.name);
+        document.body.style.backgroundImage = `url(${bg.url})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+      };
+      bgContainer.appendChild(div);
+      console.log("Added background preview:", bg.name);
+    });
+    
+    console.log("Total backgrounds added:", bgs.length);
+  } else {
+    console.error("Background container not found!");
+  }
+}
+
+// Initialize backgrounds when DOM is ready
+document.addEventListener('DOMContentLoaded', initBackgrounds);
+
+// ---------- Settings ----------
+const accentInput = document.getElementById("accentInput");
+const fontSizeInput = document.getElementById("fontSizeInput");
+const themeSelect = document.getElementById("themeSelect");
+const autoHideCheck = document.getElementById("autoHideCheck");
+const iconSizeInput = document.getElementById("iconSizeInput");
+const taskbarPos = document.getElementById("taskbarPos");
+const showClock = document.getElementById("showClock");
+const showFocus = document.getElementById("showFocus");
+const showStopwatch = document.getElementById("showStopwatch");
+const hideHeaders = document.getElementById("hideHeaders");
+const blurRange = document.getElementById("blurRange");
+const bgOpacityRange = document.getElementById("bgOpacityRange");
+const taskbar = document.getElementById("taskbar");
+
+// Hide headers setting
+if (hideHeaders) {
+  hideHeaders.addEventListener("change", e => {
+    if (e.target.checked) {
+      document.body.classList.add("hide-headers");
+    } else {
+      document.body.classList.remove("hide-headers");
+    }
+  });
+}
+
+// Accent color
+accentInput.addEventListener("input", e => {
+  document.documentElement.style.setProperty("--accent", e.target.value);
 });
 
-// ---------- ELEMENTS ----------
-const accentInput=document.getElementById("accentInput");
-const fontSizeInput=document.getElementById("fontSizeInput");
-const themeSelect=document.getElementById("themeSelect");
-const autoHideCheck=document.getElementById("autoHideCheck");
-const iconSizeInput=document.getElementById("iconSizeInput");
-const taskbarPos=document.getElementById("taskbarPos");
-const showClock=document.getElementById("showClock");
-const showFocus=document.getElementById("showFocus");
-const showStopwatch=document.getElementById("showStopwatch");
-const blurRange=document.getElementById("blurRange");
-const bgOpacityRange=document.getElementById("bgOpacityRange");
-const taskbar=document.getElementById("taskbar");
+// Font size
+fontSizeInput.addEventListener("input", e => {
+  document.documentElement.style.fontSize = e.target.value + "px";
+});
 
-// ---------- APPEARANCE ----------
-accentInput.addEventListener("input", e=>{document.documentElement.style.setProperty("--accent",e.target.value)});
-fontSizeInput.addEventListener("input", e=>{document.documentElement.style.fontSize=e.target.value+"px"});
-
-// ======= LIGHT/DARK THEME =======
-themeSelect.addEventListener("change", e=>{
-  const val=e.target.value;
-  if(val==="dark"){
-    document.body.style.backgroundColor="#14141e";
-    document.body.style.color="white";
+// Theme
+themeSelect.addEventListener("change", e => {
+  const val = e.target.value;
+  if (val === "dark") {
+    document.body.style.backgroundColor = "#14141e";
+    document.body.style.color = "white";
     document.documentElement.style.setProperty("--glass-bg", `rgba(20,20,30,${bgOpacityRange.value})`);
-    document.querySelectorAll("input,select,textarea").forEach(el=>{
-      el.style.background="rgba(255,255,255,.08)";
-      el.style.color="#fff";
+    document.querySelectorAll("input, select, textarea").forEach(el => {
+      el.style.background = "rgba(255,255,255,.08)";
+      el.style.color = "#fff";
     });
   } else {
-    document.body.style.backgroundColor="#f0f0f0";
-    document.body.style.color="#000";
+    document.body.style.backgroundColor = "#f0f0f0";
+    document.body.style.color = "#000";
     document.documentElement.style.setProperty("--glass-bg", `rgba(255,255,255,${bgOpacityRange.value})`);
-    document.querySelectorAll("input,select,textarea").forEach(el=>{
-      el.style.background="rgba(0,0,0,.05)";
-      el.style.color="#000";
+    document.querySelectorAll("input, select, textarea").forEach(el => {
+      el.style.background = "rgba(0,0,0,.05)";
+      el.style.color = "#000";
     });
   }
 });
 
-// ---------- TASKBAR ----------
-let autoHideEnabled=false;
-autoHideCheck.addEventListener("change", e=>{autoHideEnabled=e.target.checked;if(!autoHideEnabled) taskbar.style.opacity=1});
-iconSizeInput.addEventListener("input", e=>{
-  const size=e.target.value+"px";
-  document.querySelectorAll(".task-btn").forEach(btn=>{
-    btn.style.width=size;
-    btn.style.height=size;
-    btn.style.fontSize=parseInt(size)/2+"px";
+// Icon size
+iconSizeInput.addEventListener("input", e => {
+  const size = e.target.value + "px";
+  document.querySelectorAll(".task-btn").forEach(btn => {
+    btn.style.width = size;
+    btn.style.height = size;
   });
 });
-taskbarPos.addEventListener("change", e=>{
-  const pos=e.target.value;
-  taskbar.style.top=taskbar.style.bottom=taskbar.style.left=taskbar.style.right="auto";
-  taskbar.style.flexDirection="row";
-  if(pos==="bottom"){taskbar.style.bottom="20px";taskbar.style.left="50%";taskbar.style.transform="translateX(-50%)";taskbar.style.flexDirection="row";}
-  else if(pos==="top"){taskbar.style.top="20px";taskbar.style.left="50%";taskbar.style.transform="translateX(-50%)";taskbar.style.flexDirection="row";}
-  else if(pos==="left"){taskbar.style.top="50%";taskbar.style.left="20px";taskbar.style.transform="translateY(-50%)";taskbar.style.flexDirection="column";}
-  else if(pos==="right"){taskbar.style.top="50%";taskbar.style.right="20px";taskbar.style.transform="translateY(-50%)";taskbar.style.flexDirection="column";}
-});
 
-// ---------- AUTO-HIDE ----------
-function updateTaskbarVisibility(e){if(!autoHideEnabled)return;
-  const pos=taskbarPos.value,margin=20,hiddenOffset=-70;
-  if(pos==="bottom") taskbar.style.bottom=e.clientY>window.innerHeight-80?margin+"px":hiddenOffset+"px";
-  if(pos==="top") taskbar.style.top=e.clientY<80?margin+"px":hiddenOffset+"px";
-  if(pos==="left") taskbar.style.left=e.clientX<80?margin+"px":hiddenOffset+"px";
-  if(pos==="right") taskbar.style.right=e.clientX>window.innerWidth-80?margin+"px":hiddenOffset+"px";
-}
-document.body.addEventListener("mousemove", updateTaskbarVisibility);
-autoHideCheck.addEventListener("change", e=>{
-  autoHideEnabled=e.target.checked;
-  if(!autoHideEnabled){
-    const pos=taskbarPos.value;
-    if(pos==="bottom") taskbar.style.bottom="20px";
-    if(pos==="top") taskbar.style.top="20px";
-    if(pos==="left") taskbar.style.left="20px";
-    if(pos==="right") taskbar.style.right="20px";
+// Taskbar position
+taskbarPos.addEventListener("change", e => {
+  const pos = e.target.value;
+  taskbar.style.top = taskbar.style.bottom = taskbar.style.left = taskbar.style.right = "auto";
+  taskbar.style.flexDirection = "row";
+  
+  if (pos === "bottom") {
+    taskbar.style.bottom = "20px";
+    taskbar.style.left = "50%";
+    taskbar.style.transform = "translateX(-50%)";
+    taskbar.style.flexDirection = "row";
+  } else if (pos === "top") {
+    taskbar.style.top = "20px";
+    taskbar.style.left = "50%";
+    taskbar.style.transform = "translateX(-50%)";
+    taskbar.style.flexDirection = "row";
+  } else if (pos === "left") {
+    taskbar.style.top = "50%";
+    taskbar.style.left = "20px";
+    taskbar.style.transform = "translateY(-50%)";
+    taskbar.style.flexDirection = "column";
+  } else if (pos === "right") {
+    taskbar.style.top = "50%";
+    taskbar.style.right = "20px";
+    taskbar.style.transform = "translateY(-50%)";
+    taskbar.style.flexDirection = "column";
   }
 });
-taskbar.style.transition="transform 0.25s ease,bottom 0.25s ease,top 0.25s ease,left 0.25s ease,right 0.25s ease";
 
-// ---------- WINDOWS ----------
-showClock.addEventListener("change", e=>{document.getElementById("clockWin").style.display=e.target.checked?"block":"none"});
-showFocus.addEventListener("change", e=>{document.getElementById("focusWin").style.display=e.target.checked?"block":"none"});
-showStopwatch.addEventListener("change", e=>{document.getElementById("swWin").style.display=e.target.checked?"block":"none"});
+// Auto-hide taskbar
+let autoHideEnabled = false;
 
-// ---------- SYSTEM ----------
-blurRange.addEventListener("input", e=>{document.documentElement.style.setProperty("--blur",`blur(${e.target.value}px)`)});
-bgOpacityRange.addEventListener("input", e=>{
-  const theme=themeSelect.value;
-  if(theme==="dark") document.documentElement.style.setProperty("--glass-bg",`rgba(20,20,30,${e.target.value})`);
-  else document.documentElement.style.setProperty("--glass-bg",`rgba(255,255,255,${e.target.value})`);
+autoHideCheck.addEventListener("change", e => {
+  autoHideEnabled = e.target.checked;
+  if (!autoHideEnabled) {
+    const pos = taskbarPos.value;
+    if (pos === "bottom") taskbar.style.bottom = "20px";
+    if (pos === "top") taskbar.style.top = "20px";
+    if (pos === "left") taskbar.style.left = "20px";
+    if (pos === "right") taskbar.style.right = "20px";
+  }
 });
 
-// ---------- Drag + Resize ----------
-document.querySelectorAll(".window").forEach(win=>{
-  win.onmousedown=e=>{
-    if(e.target.classList.contains("resize"))return;
-    let x=e.clientX-win.offsetLeft,y=e.clientY-win.offsetTop;
-    document.onmousemove=ev=>{win.style.left=ev.clientX-x+"px";win.style.top=ev.clientY-y+"px"; scaleWindow(win);}
-    document.onmouseup=()=>document.onmousemove=null;
-  };
-  ["n","s","e","w","ne","nw","se","sw"].forEach(d=>{
-    const r=document.createElement("div"); r.className="resize "+d; win.appendChild(r);
-    r.onmousedown=e=>{
+document.body.addEventListener("mousemove", e => {
+  if (!autoHideEnabled) return;
+  
+  const pos = taskbarPos.value;
+  const margin = 20;
+  const hiddenOffset = -70;
+  
+  if (pos === "bottom") {
+    taskbar.style.bottom = e.clientY > window.innerHeight - 80 ? margin + "px" : hiddenOffset + "px";
+  } else if (pos === "top") {
+    taskbar.style.top = e.clientY < 80 ? margin + "px" : hiddenOffset + "px";
+  } else if (pos === "left") {
+    taskbar.style.left = e.clientX < 80 ? margin + "px" : hiddenOffset + "px";
+  } else if (pos === "right") {
+    taskbar.style.right = e.clientX > window.innerWidth - 80 ? margin + "px" : hiddenOffset + "px";
+  }
+});
+
+// Show/hide windows
+showClock.addEventListener("change", e => {
+  document.getElementById("clockWin").style.display = e.target.checked ? "block" : "none";
+});
+
+showFocus.addEventListener("change", e => {
+  document.getElementById("focusWin").style.display = e.target.checked ? "block" : "none";
+});
+
+showStopwatch.addEventListener("change", e => {
+  document.getElementById("swWin").style.display = e.target.checked ? "block" : "none";
+});
+
+// Initialize window visibility based on checkbox state on load
+// Make sure clock, focus, and stopwatch are visible on load
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    const clockWin = document.getElementById("clockWin");
+    const focusWin = document.getElementById("focusWin");
+    const swWin = document.getElementById("swWin");
+    
+    console.log("Initializing windows...");
+    console.log("Clock:", clockWin);
+    console.log("Focus:", focusWin);
+    console.log("Stopwatch:", swWin);
+    console.log("Stopwatch checkbox:", showStopwatch);
+    
+    if (clockWin && showClock && showClock.checked) {
+      clockWin.style.display = "block";
+      console.log("Clock window shown");
+    }
+    if (focusWin && showFocus && showFocus.checked) {
+      focusWin.style.display = "block";
+      console.log("Focus window shown");
+    }
+    if (swWin && showStopwatch && showStopwatch.checked) {
+      swWin.style.display = "block";
+      console.log("Stopwatch window shown");
+    }
+  }, 200);
+});
+
+// Blur
+blurRange.addEventListener("input", e => {
+  document.documentElement.style.setProperty("--blur", `blur(${e.target.value}px)`);
+  document.getElementById("blurValue").textContent = e.target.value + "px";
+});
+
+// Background opacity
+bgOpacityRange.addEventListener("input", e => {
+  const theme = themeSelect.value;
+  if (theme === "dark") {
+    document.documentElement.style.setProperty("--glass-bg", `rgba(20,20,30,${e.target.value})`);
+  } else {
+    document.documentElement.style.setProperty("--glass-bg", `rgba(255,255,255,${e.target.value})`);
+  }
+  document.getElementById("opacityValue").textContent = e.target.value;
+});
+
+// ---------- Drag & Drop for Widgets ----------
+const widgetCards = document.querySelectorAll(".widget-card");
+
+widgetCards.forEach(card => {
+  card.addEventListener("dragstart", e => {
+    e.dataTransfer.effectAllowed = "copy";
+    e.dataTransfer.setData("text/plain", card.dataset.widget);
+    card.classList.add("dragging");
+  });
+  
+  card.addEventListener("dragend", e => {
+    card.classList.remove("dragging");
+  });
+});
+
+document.body.addEventListener("dragover", e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "copy";
+});
+
+document.body.addEventListener("drop", e => {
+  e.preventDefault();
+  const widgetId = e.dataTransfer.getData("text/plain");
+  const widget = document.getElementById(widgetId);
+  
+  if (widget && widget.style.display !== "block") {
+    // Position at drop location
+    widget.style.left = (e.clientX - 150) + "px";
+    widget.style.top = (e.clientY - 100) + "px";
+    widget.style.display = "block";
+    widget.classList.remove("pop");
+    void widget.offsetWidth;
+    widget.classList.add("pop");
+    bringToFront(widget);
+  }
+});
+
+// ---------- Drag & Resize Windows ----------
+document.querySelectorAll(".window").forEach(win => {
+  // Click to bring to front
+  win.addEventListener("mousedown", () => {
+    bringToFront(win);
+  });
+  
+  // Dragging - can drag from anywhere on the window
+  win.addEventListener("mousedown", e => {
+    // Don't drag if clicking on interactive elements
+    const target = e.target;
+    if (
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'INPUT' ||
+      target.tagName === 'SELECT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.tagName === 'VIDEO' ||
+      target.tagName === 'IFRAME' ||
+      target.closest('button') ||
+      target.closest('input') ||
+      target.closest('select') ||
+      target.closest('textarea') ||
+      target.closest('.window-btn') ||
+      target.closest('.resize') ||
+      target.closest('ul') ||
+      target.closest('table')
+    ) {
+      return;
+    }
+    
+    let offsetX = e.clientX - win.offsetLeft;
+    let offsetY = e.clientY - win.offsetTop;
+    
+    function moveWindow(ev) {
+      win.style.left = ev.clientX - offsetX + "px";
+      win.style.top = ev.clientY - offsetY + "px";
+    }
+    
+    function stopMoving() {
+      document.removeEventListener("mousemove", moveWindow);
+      document.removeEventListener("mouseup", stopMoving);
+    }
+    
+    document.addEventListener("mousemove", moveWindow);
+    document.addEventListener("mouseup", stopMoving);
+  });
+  
+  // Resize handles
+  ["n", "s", "e", "w", "ne", "nw", "se", "sw"].forEach(d => {
+    const r = document.createElement("div");
+    r.className = "resize " + d;
+    win.appendChild(r);
+    
+    r.addEventListener("mousedown", e => {
       e.stopPropagation();
-      let sx=e.clientX,sy=e.clientY,sw=win.offsetWidth,sh=win.offsetHeight,sl=win.offsetLeft,st=win.offsetTop;
-      document.onmousemove=ev=>{
-        if(d.includes("e"))win.style.width=sw+(ev.clientX-sx)+"px";
-        if(d.includes("s"))win.style.height=sh+(ev.clientY-sy)+"px";
-        if(d.includes("w")){win.style.width=sw-(ev.clientX-sx)+"px";win.style.left=sl+(ev.clientX-sx)+"px";}
-        if(d.includes("n")){win.style.height=sh-(ev.clientY-sy)+"px";win.style.top=st+(ev.clientY-sy)+"px";}
-        scaleWindow(win);
-      };
-      document.onmouseup=()=>document.onmousemove=null;
-    };
+      
+      let startX = e.clientX;
+      let startY = e.clientY;
+      let startWidth = win.offsetWidth;
+      let startHeight = win.offsetHeight;
+      let startLeft = win.offsetLeft;
+      let startTop = win.offsetTop;
+      
+      function resizeWindow(ev) {
+        if (d.includes("e")) {
+          win.style.width = startWidth + (ev.clientX - startX) + "px";
+        }
+        if (d.includes("s")) {
+          win.style.height = startHeight + (ev.clientY - startY) + "px";
+        }
+        if (d.includes("w")) {
+          const newWidth = startWidth - (ev.clientX - startX);
+          if (newWidth > 200) {
+            win.style.width = newWidth + "px";
+            win.style.left = startLeft + (ev.clientX - startX) + "px";
+          }
+        }
+        if (d.includes("n")) {
+          const newHeight = startHeight - (ev.clientY - startY);
+          if (newHeight > 150) {
+            win.style.height = newHeight + "px";
+            win.style.top = startTop + (ev.clientY - startY) + "px";
+          }
+        }
+      }
+      
+      function stopResize() {
+        document.removeEventListener("mousemove", resizeWindow);
+        document.removeEventListener("mouseup", stopResize);
+      }
+      
+      document.addEventListener("mousemove", resizeWindow);
+      document.addEventListener("mouseup", stopResize);
+    });
   });
 });
-
-// ---------- Scaling ----------
-function scaleWindow(win){
-  if(["todoWin","tableWin"].includes(win.id)) return;
-  const container = win.querySelectorAll(".scalable,#clockContent,#focusContent,#swContent");
-  container.forEach(c=>{
-    let baseW=c.dataset.baseW || c.offsetWidth;
-    if(!c.dataset.baseW)c.dataset.baseW=c.offsetWidth;
-    const scale = win.offsetWidth / baseW;
-    c.style.transform=`scale(${scale})`;
-  });
-}
 </script>
 </body>
 </html>
