@@ -1025,8 +1025,9 @@ button:active{transform: scale(0.98)}
 #aiAssistant {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   display: none;
   z-index: 10000;
   animation: fadeIn 0.3s ease;
@@ -1070,18 +1071,32 @@ body.ai-active::before {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: var(--glass-bg);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
   backdrop-filter: var(--blur);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 60px;
   margin-bottom: 30px;
   box-shadow: 
-    0 0 30px var(--accent),
-    0 0 60px var(--accent),
+    0 0 30px rgba(102, 126, 234, 0.6),
+    0 0 60px rgba(118, 75, 162, 0.4),
     inset 0 0 20px rgba(255,255,255,0.1);
   animation: pulse 2s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-orb::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 43px solid white;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 @keyframes pulse {
@@ -1092,11 +1107,10 @@ body.ai-active::before {
 .ai-chat-container {
   width: 90%;
   max-width: 700px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--blur);
+  background: transparent;
+  backdrop-filter: none;
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   max-height: 60vh;
   display: flex;
   flex-direction: column;
@@ -1109,9 +1123,10 @@ body.ai-active::before {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: #ff5f57;
-  border: none;
-  color: white;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  border: 2px solid rgba(255, 95, 87, 0.5);
+  color: #ff5f57;
   font-size: 24px;
   cursor: pointer;
   display: flex;
@@ -1123,6 +1138,8 @@ body.ai-active::before {
 
 .ai-close-btn:hover {
   transform: scale(1.1);
+  background: #ff5f57;
+  color: white;
   box-shadow: 0 8px 20px rgba(255, 95, 87, 0.6);
 }
 
@@ -1139,6 +1156,9 @@ body.ai-active::before {
   padding: 12px 16px;
   border-radius: 12px;
   animation: slideIn 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 @keyframes slideIn {
@@ -1158,7 +1178,7 @@ body.ai-active::before {
 }
 
 .ai-message.user {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, rgba(124, 92, 255, 0.8) 100%);
   margin-left: auto;
   margin-right: 0;
   max-width: 80%;
@@ -1166,7 +1186,8 @@ body.ai-active::before {
 }
 
 .ai-message.assistant {
-  background: rgba(255,255,255,0.1);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
   margin-right: auto;
   margin-left: 0;
   max-width: 80%;
@@ -1180,33 +1201,40 @@ body.ai-active::before {
 .ai-input {
   flex: 1;
   padding: 12px 16px;
-  background: rgba(255,255,255,0.1);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
   border: 2px solid rgba(255,255,255,0.2);
   border-radius: 12px;
   color: white;
   outline: none;
   transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .ai-input:focus {
-  background: rgba(255,255,255,0.15);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
   border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(124, 92, 255, 0.4);
 }
 
 .ai-send-btn {
   padding: 12px 24px;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent) 0%, rgba(124, 92, 255, 0.8) 100%);
+  backdrop-filter: var(--blur);
   border: none;
   border-radius: 12px;
   color: white;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(124, 92, 255, 0.4);
 }
 
 .ai-send-btn:hover {
   opacity: 0.9;
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 92, 255, 0.6);
 }
 
 .ai-send-btn:disabled {
@@ -1217,10 +1245,12 @@ body.ai-active::before {
 .ai-typing {
   display: none;
   padding: 12px 16px;
-  background: rgba(255,255,255,0.1);
+  background: var(--glass-bg);
+  backdrop-filter: var(--blur);
   border-radius: 12px;
   margin-bottom: 15px;
   max-width: 80%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .ai-typing.active {
@@ -1768,12 +1798,12 @@ body.ai-active::before {
 <div id="aiAssistant">
   <button class="ai-close-btn" onclick="closeAI()">✕</button>
   
-  <div class="ai-orb">🤖</div>
+  <div class="ai-orb"></div>
   
   <div class="ai-chat-container">
     <div class="ai-messages" id="aiMessages">
       <div class="ai-message assistant">
-        Hi! I'm your AI assistant. How can I help you today?
+        Hi! I'm your AI assistant. I can help with math, time, date, weather info, open widgets, and change settings. Try asking me something!
       </div>
     </div>
     
@@ -2296,7 +2326,7 @@ function showNotification(message) {
 // Load account on page load
 document.addEventListener('DOMContentLoaded', loadAccount);
 
-// ---------- AI Assistant ----------
+// ---------- ENHANCED AI ASSISTANT ----------
 let aiActive = false;
 
 // Press 'G' to open AI
@@ -2325,6 +2355,114 @@ function closeAI() {
   document.body.classList.remove('ai-active');
 }
 
+// Enhanced AI processing
+function evaluateMath(expression) {
+  try {
+    // Basic sanitization
+    const sanitized = expression.replace(/[^0-9+\-*/().\s]/g, '');
+    const result = Function('"use strict"; return (' + sanitized + ')')();
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+function parseCommand(message) {
+  const lower = message.toLowerCase();
+  
+  // Math detection
+  if (/[\d+\-*/().]/.test(message) && !/[a-z]{3,}/i.test(message.replace(/what|is|equals|calculate|compute/gi, ''))) {
+    const mathExpr = message.replace(/what is|equals|calculate|compute|=/gi, '').trim();
+    const result = evaluateMath(mathExpr);
+    if (result !== null) {
+      return { type: 'math', result: result, expression: mathExpr };
+    }
+  }
+  
+  // Time queries
+  if (/(what.*time|current time|time now|tell.*time)/i.test(lower)) {
+    return { type: 'time' };
+  }
+  
+  // Date queries
+  if (/(what.*date|current date|today.*date|what.*today)/i.test(lower)) {
+    return { type: 'date' };
+  }
+  
+  // Weather queries
+  if (/(weather|temperature|forecast|rain|sunny|cloudy)/i.test(lower)) {
+    return { type: 'weather' };
+  }
+  
+  // Widget opening commands
+  const widgetMap = {
+    'clock': 'clockWin',
+    'timer': 'focusWin',
+    'focus': 'focusWin',
+    'stopwatch': 'swWin',
+    'todo': 'todoWin',
+    'calendar': 'calWin',
+    'table': 'tableWin',
+    'spotify': 'spotifyWin',
+    'youtube': 'ytWin',
+    'slides': 'slidesWin',
+    'classroom': 'classroomWin',
+    'image': 'imageWin',
+    'text': 'textWin',
+    'video': 'mp4Win',
+    'player': 'ytPlayerWin',
+    'background': 'bgWin',
+    'settings': 'settingsWin',
+    'widgets': 'moreWidgets'
+  };
+  
+  if (/(open|show|launch|display|start)/i.test(lower)) {
+    for (const [keyword, widgetId] of Object.entries(widgetMap)) {
+      if (lower.includes(keyword)) {
+        return { type: 'widget', widgetId: widgetId, widgetName: keyword };
+      }
+    }
+  }
+  
+  // Close commands
+  if (/(close|hide|exit)/i.test(lower)) {
+    for (const [keyword, widgetId] of Object.entries(widgetMap)) {
+      if (lower.includes(keyword)) {
+        return { type: 'close', widgetId: widgetId, widgetName: keyword };
+      }
+    }
+  }
+  
+  // Settings commands
+  if (/(change|set|modify|update).*accent.*color/i.test(lower)) {
+    return { type: 'setting', setting: 'accent' };
+  }
+  
+  if (/(change|set|modify).*theme/i.test(lower)) {
+    const theme = /dark|light/.exec(lower);
+    if (theme) {
+      return { type: 'setting', setting: 'theme', value: theme[0] };
+    }
+  }
+  
+  // Greetings
+  if (/(hello|hi|hey|greetings|good morning|good afternoon|good evening)/i.test(lower)) {
+    return { type: 'greeting' };
+  }
+  
+  // Help
+  if (/(help|what can you do|commands|features)/i.test(lower)) {
+    return { type: 'help' };
+  }
+  
+  // Thanks
+  if (/(thank|thanks|appreciate)/i.test(lower)) {
+    return { type: 'thanks' };
+  }
+  
+  return { type: 'unknown' };
+}
+
 async function sendAIMessage() {
   const input = document.getElementById('aiInput');
   const message = input.value.trim();
@@ -2347,30 +2485,75 @@ async function sendAIMessage() {
   // Scroll to bottom
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
   
-  // Simulate AI response (you can integrate with real AI API here)
+  // Process command
   setTimeout(() => {
     document.getElementById('aiTyping').classList.remove('active');
     
     const aiMsg = document.createElement('div');
     aiMsg.className = 'ai-message assistant';
     
-    // Simple responses based on keywords
-    let response = "I understand your question. ";
+    const command = parseCommand(message);
+    let response = "";
     
-    if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
-      response = "Hello! How can I assist you today?";
-    } else if (message.toLowerCase().includes('time')) {
-      response = `The current time is ${new Date().toLocaleTimeString()}.`;
-    } else if (message.toLowerCase().includes('date')) {
-      response = `Today is ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}.`;
-    } else if (message.toLowerCase().includes('help')) {
-      response = "I can help you with various tasks like telling you the time, date, or answering general questions. Try asking me something!";
-    } else if (message.toLowerCase().includes('weather')) {
-      response = "I don't have access to real-time weather data, but you can check your local weather service for accurate information.";
-    } else if (message.toLowerCase().includes('thank')) {
-      response = "You're welcome! Let me know if you need anything else.";
-    } else {
-      response = "That's an interesting question! I'm a simple AI assistant built into this OS. For more complex queries, you might want to integrate a more advanced AI service.";
+    switch (command.type) {
+      case 'math':
+        response = `${command.expression} = ${command.result}`;
+        break;
+        
+      case 'time':
+        const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        response = `The current time is ${time}.`;
+        break;
+        
+      case 'date':
+        const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        response = `Today is ${date}.`;
+        break;
+        
+      case 'weather':
+        response = "I don't have access to real-time weather data, but you can check your local weather service for accurate information. However, I can help you open other widgets or answer questions!";
+        break;
+        
+      case 'widget':
+        toggle(command.widgetId);
+        response = `I've opened the ${command.widgetName} widget for you!`;
+        break;
+        
+      case 'close':
+        closeWindow(command.widgetId);
+        response = `I've closed the ${command.widgetName} widget.`;
+        break;
+        
+      case 'setting':
+        if (command.setting === 'accent') {
+          response = "You can change the accent color in the Settings window. Would you like me to open it?";
+        } else if (command.setting === 'theme' && command.value) {
+          document.getElementById('themeSelect').value = command.value;
+          document.getElementById('themeSelect').dispatchEvent(new Event('change'));
+          response = `I've changed the theme to ${command.value} mode!`;
+        }
+        break;
+        
+      case 'greeting':
+        const greetings = [
+          "Hello! How can I help you today?",
+          "Hi there! What can I do for you?",
+          "Hey! Ready to assist you!",
+          "Greetings! How may I help?"
+        ];
+        response = greetings[Math.floor(Math.random() * greetings.length)];
+        break;
+        
+      case 'help':
+        response = "I can help you with:\n• Math calculations (try '5 + 3' or 'what is 12 * 8')\n• Time and date ('what time is it?')\n• Opening widgets ('open clock', 'show timer')\n• Closing widgets ('close todo')\n• Changing settings ('set theme to dark')\n\nJust ask me naturally!";
+        break;
+        
+      case 'thanks':
+        response = "You're welcome! Let me know if you need anything else!";
+        break;
+        
+      default:
+        response = "I'm not sure I understood that. Try asking me about the time, date, math problems, or ask me to open widgets. You can also ask 'help' to see what I can do!";
     }
     
     aiMsg.textContent = response;
@@ -2378,7 +2561,7 @@ async function sendAIMessage() {
     
     // Scroll to bottom
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }, 1000 + Math.random() * 1000);
+  }, 800 + Math.random() * 600);
 }
 
 // ---------- Backgrounds ----------
