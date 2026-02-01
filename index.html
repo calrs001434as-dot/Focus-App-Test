@@ -1283,6 +1283,150 @@ body.ai-active::before {
   0%, 60%, 100% { transform: translateY(0); }
   30% { transform: translateY(-10px); }
 }
+
+/* ---------- CALCULATOR ---------- */
+#calcWin { top:200px; left:60px; width:260px; }
+.calc-display { background:rgba(255,255,255,0.06); border-radius:12px; padding:14px 16px; margin-top:4px; margin-bottom:10px; text-align:right; min-height:56px; display:flex; flex-direction:column; justify-content:flex-end; }
+.calc-expr { font-size:12px; opacity:0.4; min-height:16px; word-break:break-all; }
+.calc-result { font-size:30px; font-weight:600; word-break:break-all; }
+.calc-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.calc-btn { background:rgba(255,255,255,0.07); border:none; border-radius:10px; color:#fff; font-size:18px; padding:11px 0; cursor:pointer; transition:background 0.15s, transform 0.1s; }
+.calc-btn:hover { background:rgba(255,255,255,0.14); }
+.calc-btn:active { transform:scale(0.93); }
+.calc-btn.op { background:rgba(124,92,255,0.22); }
+.calc-btn.op:hover { background:rgba(124,92,255,0.38); }
+.calc-btn.eq { background:var(--accent); }
+.calc-btn.eq:hover { opacity:0.85; }
+.calc-btn.clear { color:#ff5f57; }
+
+/* ---------- HABIT TRACKER ---------- */
+#habitWin { top:60px; left:440px; width:260px; }
+.habit-list { display:flex; flex-direction:column; gap:5px; margin-top:8px; max-height:220px; overflow-y:auto; }
+.habit-row { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.05); border-radius:10px; padding:8px 10px; transition:background 0.2s; }
+.habit-row:hover { background:rgba(255,255,255,0.09); }
+.habit-check { width:20px; height:20px; border-radius:6px; border:2px solid rgba(255,255,255,0.25); background:transparent; cursor:pointer; flex-shrink:0; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+.habit-check.done { background:var(--accent); border-color:var(--accent); }
+.habit-check.done::after { content:'✓'; font-size:12px; color:#fff; font-weight:700; }
+.habit-label { flex:1; font-size:13px; opacity:0.85; transition:opacity 0.2s; }
+.habit-label.done { opacity:0.35; text-decoration:line-through; }
+.habit-del { background:none; border:none; color:rgba(255,255,255,0.2); cursor:pointer; font-size:18px; padding:0 4px; border-radius:6px; transition:color 0.2s, background 0.2s; line-height:1; }
+.habit-del:hover { color:#ff5f57; background:rgba(255,95,87,0.12); opacity:1; }
+.habit-input-row { display:flex; gap:6px; margin-top:8px; }
+.habit-input-row input { flex:1; }
+.habit-input-row button { width:34px; padding:0; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px; line-height:1; }
+
+/* ---------- UNIT CONVERTER ---------- */
+#unitWin { top:60px; left:720px; width:260px; }
+.unit-section { margin-top:10px; }
+.unit-section label { display:block; font-size:11px; opacity:0.45; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px; }
+.unit-swap-btn { background:rgba(255,255,255,0.07); border:none; color:#fff; width:30px; height:30px; border-radius:8px; cursor:pointer; margin:6px auto; display:block; font-size:16px; transition:background 0.2s, transform 0.3s; }
+.unit-swap-btn:hover { background:rgba(255,255,255,0.15); transform:rotate(180deg); }
+
+/* ---------- QUICK NOTES ---------- */
+#notesWin { top:320px; left:60px; width:240px; }
+.note-list { display:flex; flex-direction:column; gap:6px; margin-top:6px; max-height:220px; overflow-y:auto; }
+.note-card { background:rgba(255,255,255,0.05); border-radius:10px; padding:10px; position:relative; transition:background 0.2s; }
+.note-card:hover { background:rgba(255,255,255,0.08); }
+.note-card textarea { width:100%; background:transparent; border:none; color:#fff; resize:none; font-size:13px; outline:none; min-height:40px; max-height:100px; font-family:inherit; }
+.note-card textarea::placeholder { color:rgba(255,255,255,0.25); }
+.note-del { position:absolute; top:5px; right:5px; background:none; border:none; color:rgba(255,255,255,0.2); cursor:pointer; font-size:15px; padding:2px 5px; border-radius:5px; transition:color 0.2s, background 0.2s; line-height:1; }
+.note-del:hover { color:#ff5f57; background:rgba(255,95,87,0.12); opacity:1; }
+.note-add-btn { background:rgba(255,255,255,0.06); border:none; color:rgba(255,255,255,0.5); width:100%; padding:7px; border-radius:8px; cursor:pointer; font-size:18px; transition:background 0.2s, color 0.2s; margin-top:4px; }
+.note-add-btn:hover { background:rgba(255,255,255,0.12); color:#fff; }
+
+/* ---------- POMODORO RING on Focus ---------- */
+.focus-ring-wrap { position:relative; width:110px; height:110px; margin:8px auto 2px; }
+.focus-ring-svg { width:110px; height:110px; transform:rotate(-90deg); }
+.focus-ring-bg { fill:none; stroke:rgba(255,255,255,0.1); stroke-width:7; }
+.focus-ring-prog { fill:none; stroke:var(--accent); stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset 0.6s linear; }
+.focus-ring-text { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.focus-ring-text span { font-size:24px; font-weight:600; }
+#focusTime { font-size:24px; font-weight:600; margin:0; }
+
+/* ---------- KEYBOARD SHORTCUTS OVERLAY ---------- */
+#shortcutsOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); display:none; z-index:10003; align-items:center; justify-content:center; }
+#shortcutsOverlay.active { display:flex; }
+.shortcuts-panel { background:var(--glass-bg); backdrop-filter:var(--blur); border-radius:18px; padding:24px 28px; max-width:380px; width:90%; box-shadow:0 16px 50px rgba(0,0,0,0.4); }
+.shortcuts-panel h2 { margin:0 0 16px; font-size:18px; font-weight:600; }
+.shortcut-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+.shortcut-row:last-child { border:none; }
+.shortcut-desc { font-size:13px; opacity:0.8; }
+.shortcut-keys { display:flex; gap:4px; }
+.kbd { background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.14); border-radius:5px; padding:2px 7px; font-size:11px; font-family:monospace; min-width:24px; text-align:center; }
+
+/* ---------- TASKBAR TOOLTIPS ---------- */
+.task-btn { position:relative; }
+.task-btn .tip { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:rgba(20,20,30,0.88); backdrop-filter:blur(8px); color:#fff; font-size:11px; padding:4px 10px; border-radius:6px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.18s; z-index:9999; }
+.task-btn:hover .tip { opacity:1; }
+
+/* ---------- NOTIFICATION TOAST ---------- */
+.toast { position:fixed; top:24px; right:24px; background:var(--glass-bg); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); color:#fff; padding:14px 22px; border-radius:12px; box-shadow:0 8px 28px rgba(0,0,0,0.3); z-index:10005; font-size:14px; animation:toastIn 0.28s cubic-bezier(.25,.8,.25,1); pointer-events:none; border:1px solid rgba(255,255,255,0.08); }
+@keyframes toastIn { from { opacity:0; transform:translateY(-12px) translateX(12px); } to { opacity:1; transform:translateY(0) translateX(0); } }
+.toast.out { animation:toastOut 0.22s ease forwards; }
+@keyframes toastOut { to { opacity:0; transform:translateY(-8px); } }
+
+/* ---------- SHOW DESKTOP BUTTON (bottom-right corner) ---------- */
+#showDesktopBtn {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 6px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+  padding: 0;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+#showDesktopBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+#showDesktopBtn:hover {
+  width: 18px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+#showDesktopBtn:hover::before {
+  background: rgba(255, 255, 255, 0.6);
+  width: 2px;
+}
+
+#showDesktopBtn:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Tooltip for show desktop */
+#showDesktopBtn .sd-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: rgba(20,20,30,0.88);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s;
+  z-index: 9999;
+}
+
+#showDesktopBtn:hover .sd-tip {
+  opacity: 1;
+}
+
 </style>
 </head>
 <body>
@@ -1322,7 +1466,13 @@ body.ai-active::before {
     </div>
   </div>
   <div id="focusContent">
-    <div id="focusTime">25:00</div>
+    <div class="focus-ring-wrap">
+      <svg class="focus-ring-svg" viewBox="0 0 110 110">
+        <circle class="focus-ring-bg" cx="55" cy="55" r="48"/>
+        <circle class="focus-ring-prog" id="focusRingProg" cx="55" cy="55" r="48" stroke-dasharray="301.6" stroke-dashoffset="0"/>
+      </svg>
+      <div class="focus-ring-text"><span id="focusTime">25:00</span></div>
+    </div>
     <div class="focus-buttons">
       <button onclick="startFocus()">Start</button>
       <button onclick="pauseFocus()">Pause</button>
@@ -1585,6 +1735,26 @@ body.ai-active::before {
       <span>YT Player</span>
       <div class="widget-preview">Drag to desktop to add</div>
     </div>
+    <div class="widget-card" draggable="true" data-widget="calcWin">
+      <svg viewBox="0 0 24 24"><path d="M19,3H5c-1.1,0-2,.9-2,2v14c0,1.1.9,2,2,2h14c1.1,0,2-.9,2-2V5c0-1.1-.9-2-2-2zM7,17H5v-2h2v2zm0-4H5v-2h2v2zm0-4H5V7h2v2zm4,8H9v-2h2v2zm0-4H9v-2h2v2zm0-4H9V7h2v2zm4,8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2zm2,8h-2v-6h2v6z"/></svg>
+      <span>Calculator</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="habitWin">
+      <svg viewBox="0 0 24 24"><path d="M19,3H5c-1.1,0-2,.9-2,2v14c0,1.1.9,2,2,2h14c1.1,0,2-.9,2-2V5c0-1.1-.9-2-2-2zm-9,14l-5-5,1.41-1.41L10,14.17l7.59-7.59L19,8l-9,9z"/></svg>
+      <span>Habits</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="unitWin">
+      <svg viewBox="0 0 24 24"><path d="M8,6v2h8.59L2,23.59,3.41,25,19,9.41V18h2V6z"/></svg>
+      <span>Converter</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="notesWin">
+      <svg viewBox="0 0 24 24"><path d="M20,2H4c-1.1,0-2,.9-2,2v18l4-4h14c1.1,0,2-.9,2-2V4c0-1.1-.9-2-2-2z"/></svg>
+      <span>Notes</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
   </div>
 </div>
 
@@ -1794,6 +1964,114 @@ body.ai-active::before {
   </div>
 </div>
 
+
+<!-- CALCULATOR -->
+<div id="calcWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Calculator</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('calcWin')"></div>
+    </div>
+  </div>
+  <div class="calc-display">
+    <div class="calc-expr" id="calcExpr"></div>
+    <div class="calc-result" id="calcResult">0</div>
+  </div>
+  <div class="calc-buttons">
+    <button class="calc-btn clear" onclick="calcClear()">C</button>
+    <button class="calc-btn op" onclick="calcSign()">±</button>
+    <button class="calc-btn op" onclick="calcPercent()">%</button>
+    <button class="calc-btn op" onclick="calcPress('/')">÷</button>
+    <button class="calc-btn" onclick="calcPress('7')">7</button>
+    <button class="calc-btn" onclick="calcPress('8')">8</button>
+    <button class="calc-btn" onclick="calcPress('9')">9</button>
+    <button class="calc-btn op" onclick="calcPress('*')">×</button>
+    <button class="calc-btn" onclick="calcPress('4')">4</button>
+    <button class="calc-btn" onclick="calcPress('5')">5</button>
+    <button class="calc-btn" onclick="calcPress('6')">6</button>
+    <button class="calc-btn op" onclick="calcPress('-')">−</button>
+    <button class="calc-btn" onclick="calcPress('1')">1</button>
+    <button class="calc-btn" onclick="calcPress('2')">2</button>
+    <button class="calc-btn" onclick="calcPress('3')">3</button>
+    <button class="calc-btn op" onclick="calcPress('+')">+</button>
+    <button class="calc-btn" style="grid-column:span 2" onclick="calcPress('0')">0</button>
+    <button class="calc-btn" onclick="calcDot()">.</button>
+    <button class="calc-btn eq" onclick="calcEquals()">=</button>
+  </div>
+</div>
+
+<!-- HABIT TRACKER -->
+<div id="habitWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Habits</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('habitWin')"></div>
+    </div>
+  </div>
+  <div class="habit-list" id="habitList"></div>
+  <div class="habit-input-row">
+    <input type="text" id="habitInput" placeholder="New habit…" onkeydown="if(event.key==='Enter')addHabit()">
+    <button onclick="addHabit()">+</button>
+  </div>
+</div>
+
+<!-- UNIT CONVERTER -->
+<div id="unitWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Converter</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('unitWin')"></div>
+    </div>
+  </div>
+  <div class="unit-section">
+    <label>Category</label>
+    <select id="unitCat" onchange="unitCatChange()">
+      <option value="length">Length</option>
+      <option value="weight">Weight</option>
+      <option value="temp">Temperature</option>
+      <option value="speed">Speed</option>
+    </select>
+  </div>
+  <div class="unit-section">
+    <label>From</label>
+    <select id="unitFrom" onchange="unitConvert()"></select>
+    <input type="number" id="unitValFrom" placeholder="0" oninput="unitConvert()" style="margin-top:4px;">
+  </div>
+  <button class="unit-swap-btn" onclick="unitSwap()">⇅</button>
+  <div class="unit-section">
+    <label>To</label>
+    <select id="unitTo" onchange="unitConvert()"></select>
+    <input type="number" id="unitValTo" placeholder="0" readonly style="margin-top:4px;">
+  </div>
+</div>
+
+<!-- QUICK NOTES -->
+<div id="notesWin" class="glass window">
+  <div class="window-header">
+    <div class="window-title">Notes</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('notesWin')"></div>
+    </div>
+  </div>
+  <div class="note-list" id="noteList"></div>
+  <button class="note-add-btn" onclick="addNote()">+</button>
+</div>
+
+<!-- KEYBOARD SHORTCUTS OVERLAY -->
+<div id="shortcutsOverlay" onclick="if(event.target===this)this.classList.remove('active')">
+  <div class="shortcuts-panel">
+    <h2>Keyboard Shortcuts</h2>
+    <div class="shortcut-row"><span class="shortcut-desc">Open AI Assistant</span><div class="shortcut-keys"><span class="kbd">G</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Close overlay / AI</span><div class="shortcut-keys"><span class="kbd">Esc</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Show this menu</span><div class="shortcut-keys"><span class="kbd">?</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Close all windows</span><div class="shortcut-keys"><span class="kbd">Ctrl</span><span class="kbd">Shift</span><span class="kbd">X</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Clock</span><div class="shortcut-keys"><span class="kbd">1</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Focus Timer</span><div class="shortcut-keys"><span class="kbd">2</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Stopwatch</span><div class="shortcut-keys"><span class="kbd">3</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Calculator</span><div class="shortcut-keys"><span class="kbd">4</span></div></div>
+  </div>
+</div>
+
 <!-- AI Assistant -->
 <div id="aiAssistant">
   <button class="ai-close-btn" onclick="closeAI()">✕</button>
@@ -1828,27 +2106,32 @@ body.ai-active::before {
   </div>
 </div>
 
-<!-- Taskbar -->
+<!-- Taskbar (AI and Calculator buttons removed) -->
 <div id="taskbar" class="glass">
-  <div class="task-btn" onclick="toggle('clockWin')" title="Clock">
-    <svg viewBox="0 0 24 24"><path d="M11.99,2C6.47,2,2,6.48,2,12s4.47,10,9.99,10C17.52,22,22,17.52,22,12S17.52,2,11.99,2z M12,20c-4.42,0-8-3.58-8-8 s3.58-8,8-8s8,3.58,8,8S16.42,20,12,20z M12.5,7H11v6l5.25,3.15l0.75-1.23l-4.5-2.67V7z"/></svg>
+  <div class="task-btn" onclick="toggle('clockWin')"><span class="tip">Clock</span>
+    <svg viewBox="0 0 24 24"><path d="M11.99,2C6.47,2,2,6.48,2,12s4.47,10,9.99,10C17.52,22,22,17.52,22,12S17.52,2,11.99,2z M12,20c-4.42,0-8-3.58-8-8s3.58-8,8-8s8,3.58,8,8S16.42,20,12,20z M12.5,7H11v6l5.25,3.15l0.75-1.23l-4.5-2.67V7z"/></svg>
   </div>
-  <div class="task-btn" onclick="toggle('focusWin')" title="Focus Timer">
-    <svg viewBox="0 0 24 24"><path d="M6,2v6h0.01L6,8.01L10,12l-4,4l0.01,0.01H6V22h12v-5.99h-0.01L18,16l-4-4l4-3.99l-0.01-0.01H18V2H6z M16,16.5 c0,0.83-0.67,1.5-1.5,1.5S13,17.33,13,16.5s0.67-1.5,1.5-1.5S16,15.67,16,16.5z"/></svg>
+  <div class="task-btn" onclick="toggle('focusWin')"><span class="tip">Focus Timer</span>
+    <svg viewBox="0 0 24 24"><path d="M6,2v6h0.01L6,8.01L10,12l-4,4l0.01,0.01H6V22h12v-5.99h-0.01L18,16l-4-4l4-3.99l-0.01-0.01H18V2H6z"/></svg>
   </div>
-  <div class="task-btn" onclick="toggle('swWin')" title="Stopwatch">
-    <svg viewBox="0 0 24 24"><path d="M15,1H9v2h6V1z M11,14h2V8h-2V14z M19.03,7.39l1.42-1.42c-0.43-0.51-0.9-0.99-1.41-1.41l-1.42,1.42 C16.07,4.74,14.12,4,12,4c-4.97,0-9,4.03-9,9s4.02,9,9,9s9-4.03,9-9C21,10.88,20.26,8.93,19.03,7.39z M12,20c-3.87,0-7-3.13-7-7 s3.13-7,7-7s7,3.13,7,7S15.87,20,12,20z"/></svg>
+  <div class="task-btn" onclick="toggle('swWin')"><span class="tip">Stopwatch</span>
+    <svg viewBox="0 0 24 24"><path d="M15,1H9v2h6V1z M11,14h2V8h-2V14z M19.03,7.39l1.42-1.42c-0.43-0.51-0.9-0.99-1.41-1.41l-1.42,1.42C16.07,4.74,14.12,4,12,4c-4.97,0-9,4.03-9,9s4.02,9,9,9s9-4.03,9-9C21,10.88,20.26,8.93,19.03,7.39z M12,20c-3.87,0-7-3.13-7-7s3.13-7,7-7s7,3.13,7,7S15.87,20,12,20z"/></svg>
   </div>
-  <div class="task-btn" onclick="toggle('moreWidgets')" title="More Widgets">
+  <div class="task-btn" onclick="toggle('moreWidgets')"><span class="tip">Widgets</span>
     <svg viewBox="0 0 24 24"><path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"/></svg>
   </div>
-  <div class="task-btn" onclick="toggle('bgWin')" title="Backgrounds">
-    <svg viewBox="0 0 24 24"><path d="M21,19V5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14C20.1,21,21,20.1,21,19z M8.5,13.5l2.5,3.01L14.5,12 l4.5,6H5L8.5,13.5z"/></svg>
+  <div class="task-btn" onclick="toggle('bgWin')"><span class="tip">Backgrounds</span>
+    <svg viewBox="0 0 24 24"><path d="M21,19V5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14C20.1,21,21,20.1,21,19z M8.5,13.5l2.5,3.01L14.5,12l4.5,6H5L8.5,13.5z"/></svg>
   </div>
-  <div class="task-btn" onclick="toggle('settingsWin')" title="Settings">
-    <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+  <div class="task-btn" onclick="toggle('settingsWin')"><span class="tip">Settings</span>
+    <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
   </div>
 </div>
+
+<!-- Show Desktop Button (Windows 11 style, bottom-right corner) -->
+<button id="showDesktopBtn" onclick="closeAllWindows()">
+  <span class="sd-tip">Close All</span>
+</button>
 
 <script>
 // ---------- LOADING SCREEN ----------
@@ -1862,24 +2145,21 @@ let zIndexCounter = 100;
 
 function toggle(id) {
   const w = document.getElementById(id);
-  console.log("Toggle called for:", id);
-  console.log("Element found:", w);
-  
-  if (!w) {
-    console.error("Window not found:", id);
-    return;
-  }
-  
+  if (!w) return;
   if (w.style.display === "block") {
     w.style.display = "none";
-    console.log("Hiding window:", id);
   } else {
     w.style.display = "block";
+    // Re-center modals that use translateX(-50%)
+    if (id === "settingsWin" || id === "moreWidgets") {
+      w.style.left = "50%";
+      w.style.transform = "translateX(-50%)";
+    }
     w.classList.remove("pop");
     void w.offsetWidth;
     w.classList.add("pop");
     bringToFront(w);
-    console.log("Showing window:", id);
+    initWindowDrag(w);
   }
 }
 
@@ -1923,6 +2203,10 @@ function bringToFront(win) {
 }
 
 // ---------- Clock ----------
+const clockTime = document.getElementById("clockTime");
+const clockSeconds = document.getElementById("clockSeconds");
+const clockDate = document.getElementById("clockDate");
+
 function updateClock() {
   const d = new Date();
   clockTime.textContent = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -2070,9 +2354,12 @@ todoInput.addEventListener("keydown", e => {
   if (e.key === "Enter" && e.target.value.trim()) {
     const li = document.createElement("li");
     li.textContent = e.target.value;
+    li.dataset.done = "false";
     li.onclick = function() {
-      this.style.textDecoration = this.style.textDecoration === "line-through" ? "none" : "line-through";
-      this.style.opacity = this.style.textDecoration === "line-through" ? "0.5" : "1";
+      const done = this.dataset.done === "true";
+      this.dataset.done = done ? "false" : "true";
+      this.style.textDecoration = done ? "none" : "line-through";
+      this.style.opacity = done ? "1" : "0.5";
     };
     todoList.appendChild(li);
     e.target.value = "";
@@ -2229,11 +2516,9 @@ function loginAccount() {
     return;
   }
   
-  // In a real app, this would validate against a server
-  // For now, we just create/login the user
   currentUser = {
     username: username,
-    password: password, // In production, NEVER store plain passwords!
+    password: password,
     profilePicture: null,
     createdAt: new Date().toISOString()
   };
@@ -2242,7 +2527,6 @@ function loginAccount() {
   updateProfileDisplay();
   closeAccountModal();
   
-  // Show success message
   showNotification(`Welcome, ${username}!`);
 }
 
@@ -2257,7 +2541,6 @@ function updateAccount() {
   
   currentUser.username = newUsername;
   
-  // Only update password if a new one was entered
   if (newPassword) {
     currentUser.password = newPassword;
   }
@@ -2299,28 +2582,11 @@ function uploadProfilePicture(event) {
 }
 
 function showNotification(message) {
-  // Create notification element
-  const notification = document.createElement('div');
-  notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--glass-bg);
-    backdrop-filter: var(--blur);
-    padding: 16px 24px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    z-index: 10002;
-    animation: slideIn 0.3s ease;
-  `;
-  notification.textContent = message;
-  document.body.appendChild(notification);
-  
-  // Remove after 3 seconds
-  setTimeout(() => {
-    notification.style.animation = 'fadeOut 0.3s ease';
-    setTimeout(() => notification.remove(), 300);
-  }, 3000);
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = message;
+  document.body.appendChild(t);
+  setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 240); }, 2600);
 }
 
 // Load account on page load
@@ -2358,7 +2624,6 @@ function closeAI() {
 // Enhanced AI processing
 function evaluateMath(expression) {
   try {
-    // Basic sanitization
     const sanitized = expression.replace(/[^0-9+\-*/().\s]/g, '');
     const result = Function('"use strict"; return (' + sanitized + ')')();
     return result;
@@ -2413,7 +2678,9 @@ function parseCommand(message) {
     'player': 'ytPlayerWin',
     'background': 'bgWin',
     'settings': 'settingsWin',
-    'widgets': 'moreWidgets'
+    'widgets': 'moreWidgets',
+    'calculator': 'calcWin',
+    'calc': 'calcWin'
   };
   
   if (/(open|show|launch|display|start)/i.test(lower)) {
@@ -2545,7 +2812,7 @@ async function sendAIMessage() {
         break;
         
       case 'help':
-        response = "I can help you with:\n• Math calculations (try '5 + 3' or 'what is 12 * 8')\n• Time and date ('what time is it?')\n• Opening widgets ('open clock', 'show timer')\n• Closing widgets ('close todo')\n• Changing settings ('set theme to dark')\n\nJust ask me naturally!";
+        response = "I can help you with:\n• Math calculations (try '5 + 3' or 'what is 12 * 8')\n• Time and date ('what time is it?')\n• Opening widgets ('open clock', 'show calculator')\n• Closing widgets ('close todo')\n• Changing settings ('set theme to dark')\n\nJust ask me naturally!";
         break;
         
       case 'thanks':
@@ -2590,10 +2857,8 @@ const bgs = [
 
 function initBackgrounds() {
   const bgContainer = document.getElementById("bgContainer");
-  console.log("Background container:", bgContainer);
   
   if (bgContainer) {
-    // Clear any existing content
     bgContainer.innerHTML = '';
     
     bgs.forEach((bg, index) => {
@@ -2602,23 +2867,17 @@ function initBackgrounds() {
       div.style.backgroundImage = `url(${bg.url})`;
       div.title = bg.name;
       div.onclick = function() {
-        console.log("Background clicked:", bg.name);
         document.body.style.backgroundImage = `url(${bg.url})`;
         document.body.style.backgroundSize = 'cover';
         document.body.style.backgroundPosition = 'center';
         document.body.style.backgroundRepeat = 'no-repeat';
       };
       bgContainer.appendChild(div);
-      console.log("Added background preview:", bg.name);
     });
     
-    console.log("Total backgrounds added:", bgs.length);
-  } else {
-    console.error("Background container not found!");
   }
 }
 
-// Initialize backgrounds when DOM is ready
 document.addEventListener('DOMContentLoaded', initBackgrounds);
 
 // ---------- Settings ----------
@@ -2763,31 +3022,14 @@ showStopwatch.addEventListener("change", e => {
 });
 
 // Initialize window visibility based on checkbox state on load
-// Make sure clock, focus, and stopwatch are visible on load
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() {
     const clockWin = document.getElementById("clockWin");
     const focusWin = document.getElementById("focusWin");
     const swWin = document.getElementById("swWin");
-    
-    console.log("Initializing windows...");
-    console.log("Clock:", clockWin);
-    console.log("Focus:", focusWin);
-    console.log("Stopwatch:", swWin);
-    console.log("Stopwatch checkbox:", showStopwatch);
-    
-    if (clockWin && showClock && showClock.checked) {
-      clockWin.style.display = "block";
-      console.log("Clock window shown");
-    }
-    if (focusWin && showFocus && showFocus.checked) {
-      focusWin.style.display = "block";
-      console.log("Focus window shown");
-    }
-    if (swWin && showStopwatch && showStopwatch.checked) {
-      swWin.style.display = "block";
-      console.log("Stopwatch window shown");
-    }
+    if (clockWin && showClock && showClock.checked) clockWin.style.display = "block";
+    if (focusWin && showFocus && showFocus.checked) focusWin.style.display = "block";
+    if (swWin && showStopwatch && showStopwatch.checked) swWin.style.display = "block";
   }, 200);
 });
 
@@ -2834,7 +3076,6 @@ document.body.addEventListener("drop", e => {
   const widget = document.getElementById(widgetId);
   
   if (widget && widget.style.display !== "block") {
-    // Position at drop location
     widget.style.left = (e.clientX - 150) + "px";
     widget.style.top = (e.clientY - 100) + "px";
     widget.style.display = "block";
@@ -2846,101 +3087,356 @@ document.body.addEventListener("drop", e => {
 });
 
 // ---------- Drag & Resize Windows ----------
-document.querySelectorAll(".window").forEach(win => {
-  // Click to bring to front
-  win.addEventListener("mousedown", () => {
-    bringToFront(win);
-  });
-  
-  // Dragging - can drag from anywhere on the window
+function initWindowDrag(win) {
+  if (win.dataset.dragInit === "true") return;
+  win.dataset.dragInit = "true";
+
+  win.addEventListener("mousedown", () => { bringToFront(win); });
+
   win.addEventListener("mousedown", e => {
-    // Don't drag if clicking on interactive elements
     const target = e.target;
     if (
-      target.tagName === 'BUTTON' ||
-      target.tagName === 'INPUT' ||
-      target.tagName === 'SELECT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.tagName === 'VIDEO' ||
-      target.tagName === 'IFRAME' ||
-      target.closest('button') ||
-      target.closest('input') ||
-      target.closest('select') ||
-      target.closest('textarea') ||
-      target.closest('.window-btn') ||
-      target.closest('.resize') ||
-      target.closest('ul') ||
-      target.closest('table')
-    ) {
-      return;
-    }
-    
+      target.tagName === 'BUTTON' || target.tagName === 'INPUT' ||
+      target.tagName === 'SELECT' || target.tagName === 'TEXTAREA' ||
+      target.tagName === 'VIDEO' || target.tagName === 'IFRAME' ||
+      target.closest('button') || target.closest('input') ||
+      target.closest('select') || target.closest('textarea') ||
+      target.closest('.window-btn') || target.closest('.resize') ||
+      target.closest('ul') || target.closest('table')
+    ) return;
+
     let offsetX = e.clientX - win.offsetLeft;
     let offsetY = e.clientY - win.offsetTop;
-    
-    function moveWindow(ev) {
+    const move = ev => {
       win.style.left = ev.clientX - offsetX + "px";
       win.style.top = ev.clientY - offsetY + "px";
-    }
-    
-    function stopMoving() {
-      document.removeEventListener("mousemove", moveWindow);
-      document.removeEventListener("mouseup", stopMoving);
-    }
-    
-    document.addEventListener("mousemove", moveWindow);
-    document.addEventListener("mouseup", stopMoving);
+    };
+    const stop = () => {
+      document.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseup", stop);
+    };
+    document.addEventListener("mousemove", move);
+    document.addEventListener("mouseup", stop);
   });
-  
-  // Resize handles
-  ["n", "s", "e", "w", "ne", "nw", "se", "sw"].forEach(d => {
+
+  ["n","s","e","w","ne","nw","se","sw"].forEach(d => {
     const r = document.createElement("div");
     r.className = "resize " + d;
     win.appendChild(r);
-    
     r.addEventListener("mousedown", e => {
       e.stopPropagation();
-      
-      let startX = e.clientX;
-      let startY = e.clientY;
-      let startWidth = win.offsetWidth;
-      let startHeight = win.offsetHeight;
-      let startLeft = win.offsetLeft;
-      let startTop = win.offsetTop;
-      
-      function resizeWindow(ev) {
-        if (d.includes("e")) {
-          win.style.width = startWidth + (ev.clientX - startX) + "px";
-        }
-        if (d.includes("s")) {
-          win.style.height = startHeight + (ev.clientY - startY) + "px";
-        }
+      let startX = e.clientX, startY = e.clientY;
+      let startW = win.offsetWidth, startH = win.offsetHeight;
+      let startL = win.offsetLeft, startT = win.offsetTop;
+      const resize = ev => {
+        if (d.includes("e")) win.style.width = startW + (ev.clientX - startX) + "px";
+        if (d.includes("s")) win.style.height = startH + (ev.clientY - startY) + "px";
         if (d.includes("w")) {
-          const newWidth = startWidth - (ev.clientX - startX);
-          if (newWidth > 200) {
-            win.style.width = newWidth + "px";
-            win.style.left = startLeft + (ev.clientX - startX) + "px";
-          }
+          const nw = startW - (ev.clientX - startX);
+          if (nw > 200) { win.style.width = nw + "px"; win.style.left = startL + (ev.clientX - startX) + "px"; }
         }
         if (d.includes("n")) {
-          const newHeight = startHeight - (ev.clientY - startY);
-          if (newHeight > 150) {
-            win.style.height = newHeight + "px";
-            win.style.top = startTop + (ev.clientY - startY) + "px";
-          }
+          const nh = startH - (ev.clientY - startY);
+          if (nh > 150) { win.style.height = nh + "px"; win.style.top = startT + (ev.clientY - startY) + "px"; }
         }
-      }
-      
-      function stopResize() {
-        document.removeEventListener("mousemove", resizeWindow);
-        document.removeEventListener("mouseup", stopResize);
-      }
-      
-      document.addEventListener("mousemove", resizeWindow);
-      document.addEventListener("mouseup", stopResize);
+      };
+      const stop = () => { document.removeEventListener("mousemove", resize); document.removeEventListener("mouseup", stop); };
+      document.addEventListener("mousemove", resize);
+      document.addEventListener("mouseup", stop);
     });
   });
+}
+
+// Init drag on all existing windows
+document.querySelectorAll(".window").forEach(w => initWindowDrag(w));
+
+
+// ---------- CLOSE ALL ----------
+function closeAllWindows() {
+  document.querySelectorAll('.window').forEach(w => { w.style.display = 'none'; });
+}
+
+// ---------- KEYBOARD SHORTCUTS ----------
+document.addEventListener('keydown', (e) => {
+  if (e.key === '?' && !e.target.matches('input,textarea')) {
+    e.preventDefault();
+    document.getElementById('shortcutsOverlay').classList.toggle('active');
+    return;
+  }
+  if (e.key === 'Escape') {
+    document.getElementById('shortcutsOverlay').classList.remove('active');
+  }
+  if (!e.target.matches('input,textarea')) {
+    if (e.key === '1') { e.preventDefault(); toggle('clockWin'); }
+    if (e.key === '2') { e.preventDefault(); toggle('focusWin'); }
+    if (e.key === '3') { e.preventDefault(); toggle('swWin'); }
+    if (e.key === '4') { e.preventDefault(); toggle('calcWin'); }
+  }
+  if (e.ctrlKey && e.shiftKey && e.key === 'X') { e.preventDefault(); closeAllWindows(); }
 });
+
+// ---------- FOCUS PROGRESS RING ----------
+const RING_C = 2 * Math.PI * 48;
+document.getElementById('focusRingProg').style.strokeDasharray = RING_C;
+document.getElementById('focusRingProg').style.strokeDashoffset = 0;
+
+function updateRing() {
+  const ratio = ft / initialFt;
+  document.getElementById('focusRingProg').style.strokeDashoffset = RING_C * (1 - ratio);
+}
+
+const _origFocusDisp = updateFocusDisplay;
+updateFocusDisplay = function() { _origFocusDisp(); updateRing(); };
+updateRing();
+
+// ---------- CALCULATOR ----------
+let calcExpr = '', calcPrev = false;
+
+function calcPress(v) {
+  if (calcPrev && !isNaN(v)) { calcExpr = ''; calcPrev = false; }
+  calcExpr += v;
+  calcPrev = false;
+  document.getElementById('calcExpr').textContent = calcExpr;
+  try {
+    const r = Function('"use strict";return(' + calcExpr + ')')();
+    document.getElementById('calcResult').textContent = parseFloat(Number(r).toFixed(10));
+  } catch(e) { document.getElementById('calcResult').textContent = calcExpr; }
+}
+
+function calcClear() {
+  calcExpr = ''; calcPrev = false;
+  document.getElementById('calcExpr').textContent = '';
+  document.getElementById('calcResult').textContent = '0';
+}
+
+function calcEquals() {
+  try {
+    const r = parseFloat(Function('"use strict";return(' + calcExpr + ')')().toFixed(10));
+    document.getElementById('calcExpr').textContent = calcExpr + ' =';
+    document.getElementById('calcResult').textContent = r;
+    calcExpr = String(r); calcPrev = true;
+  } catch(e) { document.getElementById('calcResult').textContent = 'Error'; calcExpr = ''; }
+}
+
+function calcSign() {
+  try {
+    const r = Function('"use strict";return(' + calcExpr + ')')();
+    calcExpr = String(-r);
+    document.getElementById('calcResult').textContent = calcExpr;
+    document.getElementById('calcExpr').textContent = calcExpr;
+  } catch(e) {}
+}
+
+function calcPercent() {
+  try {
+    const r = Function('"use strict";return(' + calcExpr + ')')();
+    calcExpr = String(r / 100);
+    document.getElementById('calcResult').textContent = calcExpr;
+    document.getElementById('calcExpr').textContent = calcExpr;
+  } catch(e) {}
+}
+
+function calcDot() {
+  const parts = calcExpr.split(/([+\-*/])/);
+  if (!parts[parts.length - 1].includes('.')) calcPress('.');
+}
+
+// ---------- UNIT CONVERTER ----------
+const unitData = {
+  length: { units:['Meter','Kilometer','Mile','Foot','Inch','Centimeter','Yard'], base:{Meter:1,Kilometer:1000,Mile:1609.34,Foot:0.3048,Inch:0.0254,Centimeter:0.01,Yard:0.9144} },
+  weight: { units:['Kilogram','Gram','Pound','Ounce','Milligram','Metric Ton'], base:{Kilogram:1,Gram:0.001,Pound:0.453592,Ounce:0.0283495,Milligram:0.000001,'Metric Ton':1000} },
+  temp:   { units:['Celsius','Fahrenheit','Kelvin'], base:null },
+  speed:  { units:['m/s','km/h','mph','knot','ft/s'], base:{'m/s':1,'km/h':0.277778,'mph':0.44704,'knot':0.514444,'ft/s':0.3048} }
+};
+
+function unitCatChange() {
+  const cat = document.getElementById('unitCat').value;
+  const d = unitData[cat];
+  const sf = document.getElementById('unitFrom'), st = document.getElementById('unitTo');
+  sf.innerHTML = d.units.map((u,i) => '<option value="'+u+'"'+(i===0?' selected':'')+'>'+u+'</option>').join('');
+  st.innerHTML = d.units.map((u,i) => '<option value="'+u+'"'+(i===1?' selected':'')+'>'+u+'</option>').join('');
+  document.getElementById('unitValFrom').value = '';
+  document.getElementById('unitValTo').value = '';
+}
+unitCatChange();
+
+function unitConvert() {
+  const cat = document.getElementById('unitCat').value;
+  const from = document.getElementById('unitFrom').value;
+  const to = document.getElementById('unitTo').value;
+  const val = parseFloat(document.getElementById('unitValFrom').value);
+  if (isNaN(val)) { document.getElementById('unitValTo').value = ''; return; }
+  let result;
+  if (cat === 'temp') {
+    let c = from === 'Celsius' ? val : from === 'Fahrenheit' ? (val-32)*5/9 : val-273.15;
+    result = to === 'Celsius' ? c : to === 'Fahrenheit' ? c*9/5+32 : c+273.15;
+  } else {
+    const b = unitData[cat].base;
+    result = val * b[from] / b[to];
+  }
+  document.getElementById('unitValTo').value = parseFloat(result.toFixed(6));
+}
+
+function unitSwap() {
+  const sf = document.getElementById('unitFrom'), st = document.getElementById('unitTo');
+  const tmp = sf.value; sf.value = st.value; st.value = tmp;
+  const vf = document.getElementById('unitValFrom').value;
+  const vt = document.getElementById('unitValTo').value;
+  document.getElementById('unitValFrom').value = vt;
+  document.getElementById('unitValTo').value = vf;
+  unitConvert();
+}
+
+// ---------- HABIT TRACKER ----------
+let habits = JSON.parse(localStorage.getItem('focusOS_habits') || '[]');
+const habitToday = new Date().toDateString();
+
+function renderHabits() {
+  const list = document.getElementById('habitList');
+  list.innerHTML = '';
+  habits.forEach((h, i) => {
+    const done = h.doneOn === habitToday;
+    const row = document.createElement('div');
+    row.className = 'habit-row';
+    row.innerHTML =
+      '<div class="habit-check '+(done?'done':'')+ '" onclick="toggleHabit('+i+')"></div>' +
+      '<div class="habit-label '+(done?'done':'')+'">'+h.name+'</div>' +
+      '<button class="habit-del" onclick="deleteHabit('+i+')">×</button>';
+    list.appendChild(row);
+  });
+}
+
+function addHabit() {
+  const inp = document.getElementById('habitInput');
+  const name = inp.value.trim();
+  if (!name) return;
+  habits.push({ name, doneOn: null });
+  inp.value = '';
+  localStorage.setItem('focusOS_habits', JSON.stringify(habits));
+  renderHabits();
+}
+
+function toggleHabit(i) {
+  habits[i].doneOn = habits[i].doneOn === habitToday ? null : habitToday;
+  localStorage.setItem('focusOS_habits', JSON.stringify(habits));
+  renderHabits();
+}
+
+function deleteHabit(i) {
+  habits.splice(i, 1);
+  localStorage.setItem('focusOS_habits', JSON.stringify(habits));
+  renderHabits();
+}
+renderHabits();
+
+// ---------- QUICK NOTES ----------
+let notes = JSON.parse(localStorage.getItem('focusOS_notes') || '[]');
+
+function renderNotes() {
+  const list = document.getElementById('noteList');
+  list.innerHTML = '';
+  notes.forEach((n, i) => {
+    const card = document.createElement('div');
+    card.className = 'note-card';
+    card.innerHTML =
+      '<textarea oninput="updateNote('+i+',this.value)" placeholder="Note…">'+n+'</textarea>' +
+      '<button class="note-del" onclick="deleteNote('+i+')">×</button>';
+    list.appendChild(card);
+  });
+}
+
+function addNote() {
+  notes.push('');
+  localStorage.setItem('focusOS_notes', JSON.stringify(notes));
+  renderNotes();
+  const tas = document.querySelectorAll('#noteList textarea');
+  if (tas.length) tas[tas.length-1].focus();
+}
+
+function updateNote(i, val) {
+  notes[i] = val;
+  localStorage.setItem('focusOS_notes', JSON.stringify(notes));
+}
+
+function deleteNote(i) {
+  notes.splice(i, 1);
+  localStorage.setItem('focusOS_notes', JSON.stringify(notes));
+  renderNotes();
+}
+renderNotes();
+
+// ---------- ENHANCED AI: extra commands ----------
+const _origParseCmd = parseCommand;
+parseCommand = function(msg) {
+  const lo = msg.toLowerCase();
+  if (/(add habit|new habit|create habit)/.test(lo)) {
+    const m = lo.match(/(?:add|new|create)\s+habit\s+(.+)/i);
+    if (m) return { type:'addHabit', name: m[1].trim() };
+  }
+  if (/(open|show).*(habit)/.test(lo)) return { type:'widget', widgetId:'habitWin', widgetName:'habits' };
+  if (/(open|show).*(calc)/.test(lo)) return { type:'widget', widgetId:'calcWin', widgetName:'calculator' };
+  if (/(open|show).*(note)/.test(lo)) return { type:'widget', widgetId:'notesWin', widgetName:'notes' };
+  if (/(open|show).*(convert)/.test(lo)) return { type:'widget', widgetId:'unitWin', widgetName:'unit converter' };
+  if (/(close all|close everything)/.test(lo)) return { type:'closeAll' };
+  return _origParseCmd(msg);
+};
+
+// Patch sendAIMessage to handle new command types
+const _origSend = sendAIMessage;
+sendAIMessage = function() {
+  const input = document.getElementById('aiInput');
+  const message = input.value.trim();
+  if (!message) return;
+  const messagesDiv = document.getElementById('aiMessages');
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-message user';
+  userMsg.textContent = message;
+  messagesDiv.appendChild(userMsg);
+  input.value = '';
+  document.getElementById('aiTyping').classList.add('active');
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+  setTimeout(() => {
+    document.getElementById('aiTyping').classList.remove('active');
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-message assistant';
+    const cmd = parseCommand(message);
+    let response = '';
+    switch(cmd.type) {
+      case 'math': response = cmd.expression + ' = ' + cmd.result; break;
+      case 'time': response = 'The current time is ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + '.'; break;
+      case 'date': response = 'Today is ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + '.'; break;
+      case 'weather': response = "I don't have real-time weather data. Check a weather app for your area!"; break;
+      case 'widget': toggle(cmd.widgetId); response = 'Opened the ' + cmd.widgetName + ' widget!'; break;
+      case 'close': closeWindow(cmd.widgetId); response = 'Closed the ' + cmd.widgetName + ' widget.'; break;
+      case 'closeAll': closeAllWindows(); response = 'All windows closed!'; break;
+      case 'setting':
+        if (cmd.setting === 'theme' && cmd.value) {
+          document.getElementById('themeSelect').value = cmd.value;
+          document.getElementById('themeSelect').dispatchEvent(new Event('change'));
+          response = 'Switched to ' + cmd.value + ' theme!';
+        } else if (cmd.setting === 'accent') {
+          toggle('settingsWin'); response = 'Opened Settings — change accent color there!';
+        } break;
+      case 'addHabit':
+        habits.push({ name: cmd.name, doneOn: null });
+        localStorage.setItem('focusOS_habits', JSON.stringify(habits));
+        renderHabits();
+        response = 'Added habit: "' + cmd.name + '"! Open the Habits widget to track it.';
+        break;
+      case 'greeting':
+        const gs = ['Hello! How can I help?','Hi there! What do you need?','Hey! Ready to assist!'];
+        response = gs[Math.floor(Math.random()*gs.length)]; break;
+      case 'help':
+        response = 'I can do:\n• Math: "5 + 3", "what is 12 * 8"\n• Time / Date\n• Open widgets: "open clock", "show calculator"\n• Add habits: "add habit drink water"\n• Close all: "close all"\n• Change theme: "set theme dark"\nAsk away!'; break;
+      case 'thanks': response = "You're welcome! Anything else?"; break;
+      default: response = "Not sure about that. Try 'help' to see what I can do!";
+    }
+    aiMsg.textContent = response;
+    messagesDiv.appendChild(aiMsg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }, 800 + Math.random() * 500);
+};
 </script>
 </body>
 </html>
