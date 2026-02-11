@@ -2082,7 +2082,7 @@ body.ai-active::before {
   <div class="ai-chat-container">
     <div class="ai-messages" id="aiMessages">
       <div class="ai-message assistant">
-        Hi! I'm your AI assistant. I can help with math, time, date, weather info, open widgets, and change settings. Try asking me something!
+        Hi! I'm your AI assistant powered by advanced AI. Ask me anything - from complex questions to creative ideas, or request help with your widgets!
       </div>
     </div>
     
@@ -2135,6 +2135,59 @@ body.ai-active::before {
 </button>
 
 <script>
+// ========== SAMBANOVA AI CONFIGURATION ==========
+const SAMBANOVA_API_KEY = 'ff2aed6d-c872-4f10-8fe1-6f152396dae0';
+const SAMBANOVA_API_ENDPOINT = 'https://api.sambanova.ai/v1/chat/completions';
+const SAMBANOVA_BASE_URL = 'https://fast-api.snova.ai/v1/chat/completions';
+
+// Fallback AI responses when API is unavailable
+function getFallbackResponse(message) {
+  const lower = message.toLowerCase();
+  
+  // Time queries
+  if (/(what.*time|current time|time now|tell.*time)/i.test(lower)) {
+    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return `The current time is ${time}.`;
+  }
+  
+  // Date queries
+  if (/(what.*date|current date|today.*date|what.*today)/i.test(lower)) {
+    const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return `Today is ${date}.`;
+  }
+  
+  // Math detection
+  if (/[\d+\-*/().]/.test(message) && !/[a-z]{3,}/i.test(message.replace(/what|is|equals|calculate|compute/gi, ''))) {
+    const mathExpr = message.replace(/what is|equals|calculate|compute|=/gi, '').trim();
+    try {
+      const result = Function('"use strict"; return (' + mathExpr.replace(/[^0-9+\-*/().\s]/g, '') + ')')();
+      return `${mathExpr} = ${result}`;
+    } catch {
+      return "I can help with math! Try asking something like 'what is 5 + 3' or '12 * 8'.";
+    }
+  }
+  
+  // Greetings
+  if (/(hello|hi|hey|greetings)/i.test(lower)) {
+    return "Hello! I'm your AI assistant. I can help you with questions, control widgets, and more!";
+  }
+  
+  // Help
+  if (/(help|what can you do|commands)/i.test(lower)) {
+    return "I can help you with:\n• Answering questions\n• Opening widgets (try 'open calculator')\n• Math calculations\n• Time and date info\n• And much more! Just ask naturally.";
+  }
+  
+  return "I'm currently running in offline mode. I can still help with basic tasks like opening widgets, telling time, or doing math. Try asking 'open calculator' or 'what time is it'!";
+}
+
+// Conversation history for AI
+let aiConversationHistory = [
+  {
+    role: 'system',
+    content: 'You are a helpful AI assistant integrated into a Focus productivity app. You can help users with questions, provide information, assist with tasks, and control widgets in the app. When users ask to open widgets, respond naturally and mention that you\'ve opened the widget for them. Be concise but friendly. You have access to widgets like Clock, Focus Timer, Stopwatch, Calculator, Habits tracker, Notes, Todo list, Calendar, and more.'
+  }
+];
+
 // ---------- LOADING SCREEN ----------
 window.addEventListener("load", () => {
   const loader = document.getElementById("loadingScreen");
@@ -2593,7 +2646,7 @@ function showNotification(message) {
 // Load account on page load
 document.addEventListener('DOMContentLoaded', loadAccount);
 
-// ---------- ENHANCED AI ASSISTANT ----------
+// ========== AI ASSISTANT WITH SAMBANOVA INTEGRATION ==========
 let aiActive = false;
 
 // Press 'G' to open AI
@@ -2622,45 +2675,9 @@ function closeAI() {
   document.body.classList.remove('ai-active');
 }
 
-// Enhanced AI processing
-function evaluateMath(expression) {
-  try {
-    const sanitized = expression.replace(/[^0-9+\-*/().\s]/g, '');
-    const result = Function('"use strict"; return (' + sanitized + ')')();
-    return result;
-  } catch {
-    return null;
-  }
-}
-
-function parseCommand(message) {
+// Widget control helper
+function parseAndExecuteWidgetCommands(message, aiResponse) {
   const lower = message.toLowerCase();
-  
-  // Math detection
-  if (/[\d+\-*/().]/.test(message) && !/[a-z]{3,}/i.test(message.replace(/what|is|equals|calculate|compute/gi, ''))) {
-    const mathExpr = message.replace(/what is|equals|calculate|compute|=/gi, '').trim();
-    const result = evaluateMath(mathExpr);
-    if (result !== null) {
-      return { type: 'math', result: result, expression: mathExpr };
-    }
-  }
-  
-  // Time queries
-  if (/(what.*time|current time|time now|tell.*time)/i.test(lower)) {
-    return { type: 'time' };
-  }
-  
-  // Date queries
-  if (/(what.*date|current date|today.*date|what.*today)/i.test(lower)) {
-    return { type: 'date' };
-  }
-  
-  // Weather queries
-  if (/(weather|temperature|forecast|rain|sunny|cloudy)/i.test(lower)) {
-    return { type: 'weather' };
-  }
-  
-  // Widget opening commands
   const widgetMap = {
     'clock': 'clockWin',
     'timer': 'focusWin',
@@ -2681,63 +2698,54 @@ function parseCommand(message) {
     'settings': 'settingsWin',
     'widgets': 'moreWidgets',
     'calculator': 'calcWin',
-    'calc': 'calcWin'
+    'calc': 'calcWin',
+    'habit': 'habitWin',
+    'note': 'notesWin',
+    'converter': 'unitWin'
   };
   
+  // Check for open/show commands
   if (/(open|show|launch|display|start)/i.test(lower)) {
     for (const [keyword, widgetId] of Object.entries(widgetMap)) {
       if (lower.includes(keyword)) {
-        return { type: 'widget', widgetId: widgetId, widgetName: keyword };
+        toggle(widgetId);
+        break;
       }
     }
   }
   
-  // Close commands
+  // Check for close commands
   if (/(close|hide|exit)/i.test(lower)) {
-    for (const [keyword, widgetId] of Object.entries(widgetMap)) {
-      if (lower.includes(keyword)) {
-        return { type: 'close', widgetId: widgetId, widgetName: keyword };
+    if (/all|everything/.test(lower)) {
+      closeAllWindows();
+    } else {
+      for (const [keyword, widgetId] of Object.entries(widgetMap)) {
+        if (lower.includes(keyword)) {
+          closeWindow(widgetId);
+          break;
+        }
       }
     }
   }
   
-  // Settings commands
-  if (/(change|set|modify|update).*accent.*color/i.test(lower)) {
-    return { type: 'setting', setting: 'accent' };
-  }
-  
+  // Check for theme changes
   if (/(change|set|modify).*theme/i.test(lower)) {
     const theme = /dark|light/.exec(lower);
     if (theme) {
-      return { type: 'setting', setting: 'theme', value: theme[0] };
+      document.getElementById('themeSelect').value = theme[0];
+      document.getElementById('themeSelect').dispatchEvent(new Event('change'));
     }
   }
-  
-  // Greetings
-  if (/(hello|hi|hey|greetings|good morning|good afternoon|good evening)/i.test(lower)) {
-    return { type: 'greeting' };
-  }
-  
-  // Help
-  if (/(help|what can you do|commands|features)/i.test(lower)) {
-    return { type: 'help' };
-  }
-  
-  // Thanks
-  if (/(thank|thanks|appreciate)/i.test(lower)) {
-    return { type: 'thanks' };
-  }
-  
-  return { type: 'unknown' };
 }
 
+// Send message to Sambanova AI
 async function sendAIMessage() {
   const input = document.getElementById('aiInput');
   const message = input.value.trim();
   
   if (!message) return;
   
-  // Add user message
+  // Add user message to UI
   const messagesDiv = document.getElementById('aiMessages');
   const userMsg = document.createElement('div');
   userMsg.className = 'ai-message user';
@@ -2753,83 +2761,99 @@ async function sendAIMessage() {
   // Scroll to bottom
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
   
-  // Process command
-  setTimeout(() => {
-    document.getElementById('aiTyping').classList.remove('active');
+  // Disable send button
+  const sendBtn = document.querySelector('.ai-send-btn');
+  sendBtn.disabled = true;
+  
+  // Add user message to conversation history
+  aiConversationHistory.push({
+    role: 'user',
+    content: message
+  });
+  
+  try {
+    // Call Sambanova AI API
+    const response = await fetch(SAMBANOVA_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SAMBANOVA_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'Meta-Llama-3.1-8B-Instruct',
+        messages: aiConversationHistory,
+        temperature: 0.7,
+        top_p: 0.9,
+        max_tokens: 1024,
+        stream: false
+      })
+    });
     
-    const aiMsg = document.createElement('div');
-    aiMsg.className = 'ai-message assistant';
-    
-    const command = parseCommand(message);
-    let response = "";
-    
-    switch (command.type) {
-      case 'math':
-        response = `${command.expression} = ${command.result}`;
-        break;
-        
-      case 'time':
-        const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        response = `The current time is ${time}.`;
-        break;
-        
-      case 'date':
-        const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        response = `Today is ${date}.`;
-        break;
-        
-      case 'weather':
-        response = "I don't have access to real-time weather data, but you can check your local weather service for accurate information. However, I can help you open other widgets or answer questions!";
-        break;
-        
-      case 'widget':
-        toggle(command.widgetId);
-        response = `I've opened the ${command.widgetName} widget for you!`;
-        break;
-        
-      case 'close':
-        closeWindow(command.widgetId);
-        response = `I've closed the ${command.widgetName} widget.`;
-        break;
-        
-      case 'setting':
-        if (command.setting === 'accent') {
-          response = "You can change the accent color in the Settings window. Would you like me to open it?";
-        } else if (command.setting === 'theme' && command.value) {
-          document.getElementById('themeSelect').value = command.value;
-          document.getElementById('themeSelect').dispatchEvent(new Event('change'));
-          response = `I've changed the theme to ${command.value} mode!`;
-        }
-        break;
-        
-      case 'greeting':
-        const greetings = [
-          "Hello! How can I help you today?",
-          "Hi there! What can I do for you?",
-          "Hey! Ready to assist you!",
-          "Greetings! How may I help?"
-        ];
-        response = greetings[Math.floor(Math.random() * greetings.length)];
-        break;
-        
-      case 'help':
-        response = "I can help you with:\n• Math calculations (try '5 + 3' or 'what is 12 * 8')\n• Time and date ('what time is it?')\n• Opening widgets ('open clock', 'show calculator')\n• Closing widgets ('close todo')\n• Changing settings ('set theme to dark')\n\nJust ask me naturally!";
-        break;
-        
-      case 'thanks':
-        response = "You're welcome! Let me know if you need anything else!";
-        break;
-        
-      default:
-        response = "I'm not sure I understood that. Try asking me about the time, date, math problems, or ask me to open widgets. You can also ask 'help' to see what I can do!";
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('API Error Response:', errorText);
+      throw new Error(`API Error: ${response.status} - ${errorText}`);
     }
     
-    aiMsg.textContent = response;
+    const data = await response.json();
+    console.log('API Response:', data);
+    const aiResponse = data.choices[0].message.content;
+    
+    // Add AI response to conversation history
+    aiConversationHistory.push({
+      role: 'assistant',
+      content: aiResponse
+    });
+    
+    // Hide typing indicator
+    document.getElementById('aiTyping').classList.remove('active');
+    
+    // Execute any widget commands
+    parseAndExecuteWidgetCommands(message, aiResponse);
+    
+    // Add AI response to UI
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-message assistant';
+    aiMsg.textContent = aiResponse;
     messagesDiv.appendChild(aiMsg);
     
     // Scroll to bottom
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }, 800 + Math.random() * 600);
+    
+  } catch (error) {
+    console.error('AI Error:', error);
+    console.error('Error details:', error.message);
+    
+    // Hide typing indicator
+    document.getElementById('aiTyping').classList.remove('active');
+    
+    // Remove failed message from history
+    aiConversationHistory.pop();
+    
+    // Use fallback AI response
+    const fallbackResponse = getFallbackResponse(message);
+    
+    // Execute widget commands
+    parseAndExecuteWidgetCommands(message, fallbackResponse);
+    
+    // Show fallback response
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'ai-message assistant';
+    errorMsg.textContent = fallbackResponse;
+    messagesDiv.appendChild(errorMsg);
+    
+    // Add fallback response to history
+    aiConversationHistory.push({
+      role: 'assistant',
+      content: fallbackResponse
+    });
+    
+    // Scroll to bottom
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  } finally {
+    // Re-enable send button
+    sendBtn.disabled = false;
+  }
 }
 
 // ---------- Backgrounds ----------
@@ -3365,79 +3389,6 @@ function deleteNote(i) {
   renderNotes();
 }
 renderNotes();
-
-// ---------- ENHANCED AI: extra commands ----------
-const _origParseCmd = parseCommand;
-parseCommand = function(msg) {
-  const lo = msg.toLowerCase();
-  if (/(add habit|new habit|create habit)/.test(lo)) {
-    const m = lo.match(/(?:add|new|create)\s+habit\s+(.+)/i);
-    if (m) return { type:'addHabit', name: m[1].trim() };
-  }
-  if (/(open|show).*(habit)/.test(lo)) return { type:'widget', widgetId:'habitWin', widgetName:'habits' };
-  if (/(open|show).*(calc)/.test(lo)) return { type:'widget', widgetId:'calcWin', widgetName:'calculator' };
-  if (/(open|show).*(note)/.test(lo)) return { type:'widget', widgetId:'notesWin', widgetName:'notes' };
-  if (/(open|show).*(convert)/.test(lo)) return { type:'widget', widgetId:'unitWin', widgetName:'unit converter' };
-  if (/(close all|close everything)/.test(lo)) return { type:'closeAll' };
-  return _origParseCmd(msg);
-};
-
-// Patch sendAIMessage to handle new command types
-const _origSend = sendAIMessage;
-sendAIMessage = function() {
-  const input = document.getElementById('aiInput');
-  const message = input.value.trim();
-  if (!message) return;
-  const messagesDiv = document.getElementById('aiMessages');
-  const userMsg = document.createElement('div');
-  userMsg.className = 'ai-message user';
-  userMsg.textContent = message;
-  messagesDiv.appendChild(userMsg);
-  input.value = '';
-  document.getElementById('aiTyping').classList.add('active');
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
-  setTimeout(() => {
-    document.getElementById('aiTyping').classList.remove('active');
-    const aiMsg = document.createElement('div');
-    aiMsg.className = 'ai-message assistant';
-    const cmd = parseCommand(message);
-    let response = '';
-    switch(cmd.type) {
-      case 'math': response = cmd.expression + ' = ' + cmd.result; break;
-      case 'time': response = 'The current time is ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + '.'; break;
-      case 'date': response = 'Today is ' + new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + '.'; break;
-      case 'weather': response = "I don't have real-time weather data. Check a weather app for your area!"; break;
-      case 'widget': toggle(cmd.widgetId); response = 'Opened the ' + cmd.widgetName + ' widget!'; break;
-      case 'close': closeWindow(cmd.widgetId); response = 'Closed the ' + cmd.widgetName + ' widget.'; break;
-      case 'closeAll': closeAllWindows(); response = 'All windows closed!'; break;
-      case 'setting':
-        if (cmd.setting === 'theme' && cmd.value) {
-          document.getElementById('themeSelect').value = cmd.value;
-          document.getElementById('themeSelect').dispatchEvent(new Event('change'));
-          response = 'Switched to ' + cmd.value + ' theme!';
-        } else if (cmd.setting === 'accent') {
-          toggle('settingsWin'); response = 'Opened Settings — change accent color there!';
-        } break;
-      case 'addHabit':
-        habits.push({ name: cmd.name, doneOn: null });
-        localStorage.setItem('focusOS_habits', JSON.stringify(habits));
-        renderHabits();
-        response = 'Added habit: "' + cmd.name + '"! Open the Habits widget to track it.';
-        break;
-      case 'greeting':
-        const gs = ['Hello! How can I help?','Hi there! What do you need?','Hey! Ready to assist!'];
-        response = gs[Math.floor(Math.random()*gs.length)]; break;
-      case 'help':
-        response = 'I can do:\n• Math: "5 + 3", "what is 12 * 8"\n• Time / Date\n• Open widgets: "open clock", "show calculator"\n• Add habits: "add habit drink water"\n• Close all: "close all"\n• Change theme: "set theme dark"\nAsk away!'; break;
-      case 'thanks': response = "You're welcome! Anything else?"; break;
-      default: response = "Not sure about that. Try 'help' to see what I can do!";
-    }
-    aiMsg.textContent = response;
-    messagesDiv.appendChild(aiMsg);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }, 800 + Math.random() * 500);
-};
 </script>
 </body>
 </html>
