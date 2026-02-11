@@ -1428,6 +1428,37 @@ body.ai-active::before {
   opacity: 1;
 }
 
+/* ---------- CODE RUNNER STYLING ---------- */
+#codeOutput {
+  line-height: 1.5;
+}
+
+#codeOutput iframe {
+  border-radius: 8px;
+}
+
+#codeInput {
+  line-height: 1.5;
+  tab-size: 2;
+}
+
+/* Success/Error messages in code output */
+#codeOutput span[style*="color:#ff5f57"] {
+  display: block;
+  padding: 10px;
+  background: rgba(255, 95, 87, 0.1);
+  border-left: 3px solid #ff5f57;
+  border-radius: 4px;
+}
+
+/* ---------- WEATHER WIDGET STYLING ---------- */
+#weatherDisplay h2 {
+  background: linear-gradient(135deg, var(--accent) 0%, rgba(124, 92, 255, 0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 </style>
 </head>
 <body>
@@ -1756,6 +1787,16 @@ body.ai-active::before {
       <span>Notes</span>
       <div class="widget-preview">Drag to desktop to add</div>
     </div>
+    <div class="widget-card" draggable="true" data-widget="weatherWin">
+      <svg viewBox="0 0 24 24"><path d="M6.76,4.84l-1.8-1.79-1.41,1.41,1.79,1.79L6.76,4.84z M1,10.5h3v2H1V10.5z M11,0.55h2V3.5h-2V0.55z M19.04,2.46l1.408,1.41 l-1.79,1.79l-1.41-1.41L19.04,2.46z M17.24,18.16l1.79,1.8l1.41-1.41l-1.8-1.79L17.24,18.16z M20,10.5h3v2h-3V10.5z M12,5.5 c-3.31,0-6,2.69-6,6s2.69,6,6,6s6-2.69,6-6S15.31,5.5,12,5.5z M11,22.45h2V19.5h-2V22.45z M3.55,18.54l1.41,1.41l1.79-1.8 l-1.41-1.41L3.55,18.54z"/></svg>
+      <span>Weather</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
+    <div class="widget-card" draggable="true" data-widget="codeWin">
+      <svg viewBox="0 0 24 24"><path d="M9.4,16.6L4.8,12l4.6-4.6L8,6l-6,6l6,6L9.4,16.6z M14.6,16.6l4.6-4.6l-4.6-4.6L16,6l6,6l-6,6L14.6,16.6z"/></svg>
+      <span>Code Runner</span>
+      <div class="widget-preview">Drag to desktop to add</div>
+    </div>
   </div>
 </div>
 
@@ -2058,6 +2099,47 @@ body.ai-active::before {
   <button class="note-add-btn" onclick="addNote()">+</button>
 </div>
 
+<!-- WEATHER WIDGET -->
+<div id="weatherWin" class="glass window" style="top:100px;right:300px;width:320px;">
+  <div class="window-header">
+    <div class="window-title">Weather</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('weatherWin')"></div>
+    </div>
+  </div>
+  <div style="padding:10px;">
+    <input type="text" id="weatherCity" placeholder="Enter city name..." style="margin-bottom:10px;">
+    <button onclick="fetchWeather()" style="width:100%;margin-bottom:15px;">Get Weather</button>
+    <div id="weatherDisplay" style="text-align:center;min-height:200px;">
+      <p style="opacity:0.6;margin-top:40px;">Enter a city to see the weather</p>
+    </div>
+  </div>
+</div>
+
+<!-- CODE RUNNER WIDGET -->
+<div id="codeWin" class="glass window" style="top:140px;right:340px;width:500px;height:450px;">
+  <div class="window-header">
+    <div class="window-title">Code Runner</div>
+    <div class="window-controls">
+      <div class="window-btn close" onclick="closeWindow('codeWin')"></div>
+    </div>
+  </div>
+  <div style="padding:10px;display:flex;flex-direction:column;height:calc(100% - 50px);">
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <select id="codeLang" style="width:120px;">
+        <option value="javascript">JavaScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS Preview</option>
+      </select>
+      <button onclick="runCode()" style="flex:1;">▶ Run Code</button>
+      <button onclick="clearCode()" style="width:80px;background:rgba(255,95,87,0.3);">Clear</button>
+    </div>
+    <textarea id="codeInput" placeholder="Write your code here..." style="flex:1;font-family:monospace;resize:none;margin-bottom:10px;"></textarea>
+    <div style="font-size:12px;opacity:0.7;margin-bottom:8px;">Output:</div>
+    <div id="codeOutput" style="flex:1;background:rgba(0,0,0,0.3);border-radius:8px;padding:10px;overflow-y:auto;font-family:monospace;font-size:13px;white-space:pre-wrap;"></div>
+  </div>
+</div>
+
 <!-- KEYBOARD SHORTCUTS OVERLAY -->
 <div id="shortcutsOverlay" onclick="if(event.target===this)this.classList.remove('active')">
   <div class="shortcuts-panel">
@@ -2070,6 +2152,8 @@ body.ai-active::before {
     <div class="shortcut-row"><span class="shortcut-desc">Toggle Focus Timer</span><div class="shortcut-keys"><span class="kbd">2</span></div></div>
     <div class="shortcut-row"><span class="shortcut-desc">Toggle Stopwatch</span><div class="shortcut-keys"><span class="kbd">3</span></div></div>
     <div class="shortcut-row"><span class="shortcut-desc">Toggle Calculator</span><div class="shortcut-keys"><span class="kbd">4</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Weather</span><div class="shortcut-keys"><span class="kbd">5</span></div></div>
+    <div class="shortcut-row"><span class="shortcut-desc">Toggle Code Runner</span><div class="shortcut-keys"><span class="kbd">6</span></div></div>
   </div>
 </div>
 
@@ -2082,7 +2166,7 @@ body.ai-active::before {
   <div class="ai-chat-container">
     <div class="ai-messages" id="aiMessages">
       <div class="ai-message assistant">
-        Hi! I'm your AI assistant powered by advanced AI. Ask me anything - from complex questions to creative ideas, or request help with your widgets!
+        Hi! I'm your AI assistant powered by Sambanova AI. I can help you with questions, control widgets, fetch weather, generate tables, write & run code, change settings, and more! Try asking me something like "weather in Paris" or "write fibonacci code"!
       </div>
     </div>
     
@@ -2136,57 +2220,326 @@ body.ai-active::before {
 
 <script>
 // ========== SAMBANOVA AI CONFIGURATION ==========
+// 🔑 REPLACE YOUR API KEY HERE:
 const SAMBANOVA_API_KEY = 'ff2aed6d-c872-4f10-8fe1-6f152396dae0';
-const SAMBANOVA_API_ENDPOINT = 'https://api.sambanova.ai/v1/chat/completions';
-const SAMBANOVA_BASE_URL = 'https://fast-api.snova.ai/v1/chat/completions';
+// Get your API key from: https://cloud.sambanova.ai/
 
-// Fallback AI responses when API is unavailable
-function getFallbackResponse(message) {
-  const lower = message.toLowerCase();
-  
-  // Time queries
-  if (/(what.*time|current time|time now|tell.*time)/i.test(lower)) {
-    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    return `The current time is ${time}.`;
-  }
-  
-  // Date queries
-  if (/(what.*date|current date|today.*date|what.*today)/i.test(lower)) {
-    const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    return `Today is ${date}.`;
-  }
-  
-  // Math detection
-  if (/[\d+\-*/().]/.test(message) && !/[a-z]{3,}/i.test(message.replace(/what|is|equals|calculate|compute/gi, ''))) {
-    const mathExpr = message.replace(/what is|equals|calculate|compute|=/gi, '').trim();
-    try {
-      const result = Function('"use strict"; return (' + mathExpr.replace(/[^0-9+\-*/().\s]/g, '') + ')')();
-      return `${mathExpr} = ${result}`;
-    } catch {
-      return "I can help with math! Try asking something like 'what is 5 + 3' or '12 * 8'.";
-    }
-  }
-  
-  // Greetings
-  if (/(hello|hi|hey|greetings)/i.test(lower)) {
-    return "Hello! I'm your AI assistant. I can help you with questions, control widgets, and more!";
-  }
-  
-  // Help
-  if (/(help|what can you do|commands)/i.test(lower)) {
-    return "I can help you with:\n• Answering questions\n• Opening widgets (try 'open calculator')\n• Math calculations\n• Time and date info\n• And much more! Just ask naturally.";
-  }
-  
-  return "I'm currently running in offline mode. I can still help with basic tasks like opening widgets, telling time, or doing math. Try asking 'open calculator' or 'what time is it'!";
-}
+console.log('🚀 Focus App AI System Initialized');
+console.log('📡 API Key:', SAMBANOVA_API_KEY ? '✅ Set (length: ' + SAMBANOVA_API_KEY.length + ')' : '❌ Missing');
+console.log('🌐 Will attempt to connect to Sambanova AI');
+console.log('💡 Fallback offline AI available if connection fails');
+console.log('');
+
+// Multiple endpoint options to try
+const API_ENDPOINTS = [
+  'https://api.sambanova.ai/v1/chat/completions',
+  'https://fast-api.snova.ai/v1/chat/completions',
+  'https://api.snova.ai/v1/chat/completions'
+];
+
+let currentEndpointIndex = 0;
 
 // Conversation history for AI
 let aiConversationHistory = [
   {
     role: 'system',
-    content: 'You are a helpful AI assistant integrated into a Focus productivity app. You can help users with questions, provide information, assist with tasks, and control widgets in the app. When users ask to open widgets, respond naturally and mention that you\'ve opened the widget for them. Be concise but friendly. You have access to widgets like Clock, Focus Timer, Stopwatch, Calculator, Habits tracker, Notes, Todo list, Calendar, and more.'
+    content: `You are a helpful AI assistant integrated into a Focus productivity app. You can help users with questions, provide information, assist with tasks, and control widgets in the app.
+
+CAPABILITIES:
+- Control widgets: When users ask to open widgets, respond naturally and mention that you've opened the widget for them
+- Generate tables: When asked to create a table, format it with markdown table syntax (| Header | Header |). The app will automatically populate the table widget
+- Write code: When asked to write code, wrap it in code blocks with language (e.g., \`\`\`javascript\ncode here\n\`\`\`). The code runner will execute it automatically
+- Fetch weather: When asked about weather in a city, mention you're fetching it. The app will use the weather API
+- Change settings: When asked to change theme/colors, confirm the change. The app will apply it automatically
+
+Available widgets: Clock, Focus Timer, Stopwatch, Calculator, Habits tracker, Notes, Todo list, Calendar, Table, Weather, Code Runner, and more.
+
+Be concise but friendly. Focus on productivity and helping users accomplish their goals.`
   }
 ];
+
+// Fallback AI for when API is unavailable
+function getSmartAIResponse(message) {
+  const lower = message.toLowerCase();
+  
+  // === Time & Date Queries ===
+  if (/(what.*time|current time|time now|tell.*time)/i.test(lower)) {
+    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return `The current time is ${time}.`;
+  }
+  
+  if (/(what.*date|current date|today.*date|what.*today|what day)/i.test(lower)) {
+    const date = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return `Today is ${date}.`;
+  }
+  
+  // === Math Calculations ===
+  const mathMatch = message.match(/(?:what is|calculate|compute|solve)?\s*([0-9+\-*/(). ]+)\s*(?:=|\?)?/i);
+  if (mathMatch && /[\d+\-*/()]/.test(mathMatch[1])) {
+    try {
+      const expr = mathMatch[1].trim();
+      const sanitized = expr.replace(/[^0-9+\-*/().\s]/g, '');
+      const result = Function('"use strict"; return (' + sanitized + ')')();
+      return `${expr} = ${result}`;
+    } catch {
+      // Continue to other patterns
+    }
+  }
+  
+  // === Widget Control ===
+  if (/(open|show|launch|display)/i.test(lower)) {
+    const widgets = ['clock', 'timer', 'focus', 'stopwatch', 'todo', 'calendar', 'calculator', 'habits', 'notes'];
+    const found = widgets.find(w => lower.includes(w));
+    if (found) return `I've opened the ${found} widget for you!`;
+  }
+  
+  if (/(close|hide)/i.test(lower)) {
+    if (/all|everything/.test(lower)) return "I've closed all windows for you!";
+    const widgets = ['clock', 'timer', 'focus', 'stopwatch', 'todo', 'calendar', 'calculator', 'habits', 'notes'];
+    const found = widgets.find(w => lower.includes(w));
+    if (found) return `I've closed the ${found} widget.`;
+  }
+  
+  // === Greetings ===
+  if (/(^|\s)(hello|hi|hey|greetings|good morning|good afternoon|good evening)($|\s|!|\?)/i.test(lower)) {
+    const greetings = [
+      "Hello! How can I help you today?",
+      "Hi there! What would you like to do?",
+      "Hey! I'm here to assist you.",
+      "Greetings! What can I help you with?"
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  }
+  
+  // === Help & Capabilities ===
+  if (/(help|what can you do|capabilities|commands|how do)/i.test(lower)) {
+    return "I can help you with:\n\n• Opening widgets (try 'open calculator' or 'show todo list')\n• Telling time and date ('what time is it?')\n• Math calculations ('what is 25 * 4?')\n• Fetching weather ('weather in Tokyo')\n• Creating tables ('make a product table')\n• Writing & running code ('write fibonacci code')\n• Changing settings ('switch to dark theme', 'change color to blue')\n• Controlling the app ('close all windows')\n• Answering questions about productivity\n\nJust ask me naturally!";
+  }
+  
+  // === Thanks ===
+  if (/(thank|thanks|appreciate)/i.test(lower)) {
+    return "You're welcome! Let me know if you need anything else!";
+  }
+  
+  // === Productivity Advice ===
+  if (/(focus|concentrate|productive|distract)/i.test(lower)) {
+    const tips = [
+      "Try the Pomodoro Technique: Work for 25 minutes, then take a 5-minute break. Use the Focus Timer to help!",
+      "Start by breaking your task into smaller chunks. Add them to your Todo list and tackle them one at a time.",
+      "Remove distractions: close unnecessary apps, put your phone away, and use the Focus Timer to stay on track.",
+      "The best way to stay focused is to have a clear goal. What's the one thing you want to accomplish right now?"
+    ];
+    return tips[Math.floor(Math.random() * tips.length)];
+  }
+  
+  // === Habits ===
+  if (/(habit|routine|daily)/i.test(lower)) {
+    return "Building good habits is all about consistency! Use the Habits widget to track your daily routines. Start small - even 5 minutes a day adds up over time.";
+  }
+  
+  // === Time Management ===
+  if (/(time management|organize|plan|schedule)/i.test(lower)) {
+    return "Good time management starts with planning! Try this:\n1. Write down your tasks in the Todo list\n2. Prioritize the most important ones\n3. Use the Focus Timer for deep work\n4. Track your progress with the Habits widget";
+  }
+  
+  // === Motivation ===
+  if (/(motivat|inspire|tired|lazy|procrastinat)/i.test(lower)) {
+    const quotes = [
+      "Remember: progress over perfection. Just start with one small task!",
+      "You don't have to be great to start, but you have to start to be great. Let's begin!",
+      "The hardest part is starting. Once you begin, momentum will carry you forward.",
+      "Break it down into tiny steps. What's one thing you can do right now?"
+    ];
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  }
+  
+  // === App Features ===
+  if (/(how do|how to|how can|show me how)/i.test(lower)) {
+    if (/widget/i.test(lower)) {
+      return "To add widgets, click the '+' icon in the taskbar at the bottom. You can also drag widgets from the Widget Store directly onto your desktop!";
+    }
+    if (/background/i.test(lower)) {
+      return "Click the image icon in the taskbar to open the Background selector. Choose from 20 beautiful backgrounds!";
+    }
+    if (/timer|focus/i.test(lower)) {
+      return "The Focus Timer uses the Pomodoro Technique. Click 'Start' to begin a 25-minute focus session. You can adjust the time in settings (gear icon on the timer).";
+    }
+    if (/code|program|run/i.test(lower)) {
+      return "The Code Runner lets you write and execute JavaScript, HTML, and CSS! Just open it (press 6 or say 'open code runner'), write your code, and click 'Run'. I can also write code for you - just ask!";
+    }
+    if (/weather/i.test(lower)) {
+      return "To check weather, open the weather widget (press 5 or say 'open weather') and enter a city name. Or just ask me 'weather in [city]' and I'll fetch it for you!";
+    }
+  }
+  
+  // === Weather (can't provide real data) ===
+  if (/(weather|temperature|forecast)/i.test(lower)) {
+    const cityMatch = lower.match(/(?:in|for|at)\s+([a-z\s]+?)(?:\?|$|,|\.)/i);
+    if (cityMatch) {
+      return `I'll fetch the current weather for ${cityMatch[1].trim()}. Opening the weather widget now!`;
+    }
+    return "I can show you the weather! Just tell me which city you'd like to check. For example: 'weather in London' or 'show me weather for Tokyo'.";
+  }
+  
+  // === Table Generation ===
+  if (/(create|make|generate|build).*table/i.test(lower)) {
+    // Generate a sample table based on context
+    let tableContent = '';
+    
+    if (/product|item|inventory/i.test(lower)) {
+      tableContent = "I'll create a product table for you:\n\n| Product | Price | Stock |\n|---------|-------|-------|\n| Laptop | $999 | 15 |\n| Mouse | $25 | 50 |\n| Keyboard | $75 | 30 |";
+    } else if (/student|grade|score/i.test(lower)) {
+      tableContent = "I'll create a student grades table:\n\n| Student | Math | Science | English |\n|---------|------|---------|----------|\n| Alice | 95 | 88 | 92 |\n| Bob | 87 | 91 | 85 |\n| Charlie | 92 | 89 | 94 |";
+    } else if (/(task|project|schedule)/i.test(lower)) {
+      tableContent = "I'll create a task schedule table:\n\n| Task | Priority | Status |\n|------|----------|--------|\n| Design UI | High | In Progress |\n| Write Code | High | Not Started |\n| Testing | Medium | Not Started |";
+    } else {
+      tableContent = "I'll create a sample table for you:\n\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Data A | Data B | Data C |\n| Data D | Data E | Data F |\n| Data G | Data H | Data I |";
+    }
+    
+    return tableContent + "\n\nOpening the table widget to display this!";
+  }
+  
+  // === Code Generation ===
+  if (/(write|create|make|generate|show).*(code|program|script)/i.test(lower)) {
+    let codeResponse = '';
+    
+    if (/fibonacci/i.test(lower)) {
+      codeResponse = "Here's a Fibonacci sequence generator:\n\n```javascript\nfunction fibonacci(n) {\n  const fib = [0, 1];\n  for (let i = 2; i < n; i++) {\n    fib[i] = fib[i-1] + fib[i-2];\n  }\n  return fib;\n}\n\nconsole.log(fibonacci(10));\n```";
+    } else if (/(prime|number)/i.test(lower)) {
+      codeResponse = "Here's a prime number checker:\n\n```javascript\nfunction isPrime(num) {\n  if (num <= 1) return false;\n  for (let i = 2; i <= Math.sqrt(num); i++) {\n    if (num % i === 0) return false;\n  }\n  return true;\n}\n\nconsole.log(isPrime(17)); // true\nconsole.log(isPrime(12)); // false\n```";
+    } else if (/(sort|array)/i.test(lower)) {
+      codeResponse = "Here's an array sorting example:\n\n```javascript\nconst numbers = [64, 34, 25, 12, 22, 11, 90];\n\n// Bubble Sort\nfunction bubbleSort(arr) {\n  const n = arr.length;\n  for (let i = 0; i < n; i++) {\n    for (let j = 0; j < n - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];\n      }\n    }\n  }\n  return arr;\n}\n\nconsole.log(bubbleSort([...numbers]));\n```";
+    } else if (/calculator/i.test(lower)) {
+      codeResponse = "Here's a simple calculator:\n\n```javascript\nfunction calculate(a, b, operation) {\n  switch(operation) {\n    case '+': return a + b;\n    case '-': return a - b;\n    case '*': return a * b;\n    case '/': return b !== 0 ? a / b : 'Error: Division by zero';\n    default: return 'Invalid operation';\n  }\n}\n\nconsole.log(calculate(10, 5, '+'));  // 15\nconsole.log(calculate(10, 5, '*'));  // 50\n```";
+    } else if (/random|number/i.test(lower)) {
+      codeResponse = "Here's a random number generator:\n\n```javascript\nfunction getRandomInt(min, max) {\n  return Math.floor(Math.random() * (max - min + 1)) + min;\n}\n\nconsole.log('Random between 1-100:', getRandomInt(1, 100));\nconsole.log('Random between 1-10:', getRandomInt(1, 10));\n```";
+    } else {
+      codeResponse = "Here's a sample JavaScript code:\n\n```javascript\n// Hello World example\nfunction greet(name) {\n  return `Hello, ${name}! Welcome to the code runner.`;\n}\n\nconsole.log(greet('World'));\nconsole.log('Current time:', new Date().toLocaleTimeString());\n```";
+    }
+    
+    return codeResponse + "\n\nI'll open the code runner and execute this for you!";
+  }
+  
+  // === Settings Control ===
+  if (/(change|set|switch|make).*theme/i.test(lower)) {
+    if (/dark/i.test(lower)) {
+      return "Switching to dark theme now! Your eyes will thank you. 🌙";
+    } else if (/light/i.test(lower)) {
+      return "Switching to light theme now! Bright and clean. ☀️";
+    }
+    return "I can change the theme! Just tell me 'switch to dark theme' or 'switch to light theme'.";
+  }
+  
+  if (/(change|set).*(color|accent)/i.test(lower)) {
+    const colors = ['red', 'blue', 'green', 'purple', 'orange', 'pink'];
+    const foundColor = colors.find(c => lower.includes(c));
+    if (foundColor) {
+      return `Changing accent color to ${foundColor} now! Looking good! 🎨`;
+    }
+    return "I can change the accent color! Try: 'change color to blue' or 'set accent to purple'. Available colors: red, blue, green, purple, orange, pink.";
+  }
+  
+  // === Questions about the app ===
+  if (/(what is|what's|tell me about) (this app|focus|this)/i.test(lower)) {
+    return "Focus is a productivity app designed to help you stay organized and focused. It includes widgets for time tracking, todo lists, habit tracking, notes, and more - all in a beautiful, customizable interface!";
+  }
+  
+  // === Keyboard shortcuts ===
+  if (/(shortcut|keyboard|hotkey)/i.test(lower)) {
+    return "Keyboard shortcuts:\n• Press 'G' to open me (AI assistant)\n• Press '1' for Clock\n• Press '2' for Focus Timer\n• Press '3' for Stopwatch\n• Press '4' for Calculator\n• Press '?' to see all shortcuts\n• Ctrl+Shift+X to close all windows";
+  }
+  
+  // === Settings & Customization ===
+  if (/(change|customize|settings|theme|color)/i.test(lower)) {
+    if (/theme|dark|light/i.test(lower)) {
+      return "You can change the theme in Settings (gear icon in taskbar). Choose between dark and light modes to match your preference!";
+    }
+    if (/color|accent/i.test(lower)) {
+      return "Open Settings (gear icon) to customize your accent color, blur effects, and more visual options!";
+    }
+    if (/background|wallpaper/i.test(lower)) {
+      return "Click the image icon in the taskbar to browse 20 beautiful backgrounds! From snowy mountains to tropical beaches.";
+    }
+    return "Open Settings (gear icon in taskbar) to customize themes, colors, taskbar position, blur effects, and more!";
+  }
+  
+  // === Add/Create items ===
+  if (/(add|create|new|make) (habit|task|todo|note)/i.test(lower)) {
+    if (/habit/i.test(lower)) {
+      return "I can open the Habits widget for you! Once it's open, type your new habit in the input field and click '+'. Great habits to track: exercise, meditation, reading, or drinking water.";
+    }
+    if (/task|todo/i.test(lower)) {
+      return "Let me open the Todo widget for you! You can add tasks by typing them in and pressing Enter. Break big tasks into smaller, actionable steps!";
+    }
+    if (/note/i.test(lower)) {
+      return "I'll open the Notes widget! Click the '+' button to create a new note. Perfect for quick thoughts, ideas, or reminders.";
+    }
+  }
+  
+  // === Goal Setting ===
+  if (/(goal|achieve|accomplish|target)/i.test(lower)) {
+    return "Setting goals? Here's my advice:\n1. Make them specific and measurable\n2. Break them into daily tasks (use Todo widget)\n3. Track daily progress (use Habits widget)\n4. Use the Focus Timer for deep work\n5. Review weekly - celebrate small wins!";
+  }
+  
+  // === Stress/Overwhelm ===
+  if (/(stress|overwhelm|anxious|too much)/i.test(lower)) {
+    return "Feeling overwhelmed? Try this:\n1. Take a deep breath\n2. Write everything down in the Todo list\n3. Pick just ONE thing to do now\n4. Set a timer for 25 minutes\n5. Focus on that one thing\n\nRemember: you can't do everything at once, but you can do one thing right now.";
+  }
+  
+  // === Break/Rest ===
+  if (/(break|rest|tired|exhausted)/i.test(lower)) {
+    return "Rest is productive too! The Focus Timer includes built-in breaks. After 25 minutes of focused work, take a 5-minute break. Step away from your screen, stretch, or grab some water. Your brain needs rest to perform well!";
+  }
+  
+  // === Comparison questions ===
+  if (/(difference between|vs|versus|compare)/i.test(lower)) {
+    if (/(todo|task).*(habit)/i.test(lower)) {
+      return "Great question! Todos are one-time tasks you complete and check off. Habits are recurring actions you want to do daily (like exercise or meditation). Use both: Todos for projects, Habits for building routines!";
+    }
+    if (/(focus|timer).*(stopwatch)/i.test(lower)) {
+      return "Focus Timer counts DOWN (default 25 min) - perfect for time-blocking work sessions. Stopwatch counts UP - great for tracking how long tasks actually take. Use Focus Timer for structured work, Stopwatch for time tracking!";
+    }
+  }
+  
+  // === Creative & Personal Questions ===
+  if (/(who are you|what are you|your name)/i.test(lower)) {
+    return "I'm your AI assistant integrated into the Focus app! I'm here to help you stay productive, answer questions, and control your widgets. Think of me as your personal productivity companion!";
+  }
+  
+  if (/(how are you|how's it going)/i.test(lower)) {
+    return "I'm doing great, thanks for asking! I'm here and ready to help you be productive. What would you like to work on today?";
+  }
+  
+  // === Feature-specific questions ===
+  if (/(what.*widget|which widget|best widget|available widget)/i.test(lower)) {
+    return "Here are the available widgets:\n• Clock - current time\n• Focus Timer - 25min work sessions\n• Stopwatch - time tracking\n• Todo List - task management\n• Habits - daily habit tracking\n• Notes - quick notes\n• Calculator - math\n• Calendar - date picker\n• Table - data tables\n• Weather - live weather data\n• Code Runner - write & execute code\n\nClick the '+' icon in the taskbar to browse all widgets!";
+  }
+  
+  // === Context-aware learning responses ===
+  if (/(learn|study|education|exam|test)/i.test(lower)) {
+    return "For effective studying:\n1. Use the Pomodoro Technique (Focus Timer) - 25 min study, 5 min break\n2. Break material into chunks (Todo list)\n3. Track study habits daily (Habits widget)\n4. Take notes as you learn (Notes widget)\n5. Review regularly, not just before exams\n\nConsistent daily effort beats cramming!";
+  }
+  
+  if (/(work|job|office|meeting)/i.test(lower)) {
+    return "For productive work sessions:\n1. Start your day by listing tasks (Todo widget)\n2. Prioritize top 3 most important tasks\n3. Use Focus Timer for deep work (no distractions!)\n4. Take proper breaks between sessions\n5. Track your accomplishments in Habits\n\nRemember: working smart > working long!";
+  }
+  
+  // === Default Intelligent Response with variety ===
+  const questionWords = ['what', 'why', 'how', 'when', 'where', 'who'];
+  const hasQuestionWord = questionWords.some(w => lower.includes(w));
+  
+  if (hasQuestionWord) {
+    return "That's a great question! While I can't access external information, I can help you with:\n• App controls and navigation\n• Productivity tips and strategies\n• Widget management\n• Time and calculations\n\nTry asking me something like:\n• 'Open the calculator'\n• 'Give me a productivity tip'\n• 'What time is it?'\n• 'How do I add a habit?'";
+  }
+  
+  const intelligentDefaults = [
+    "I'm here to help! I can control widgets, share productivity tips, tell time, do math, and guide you through the app. What would you like to do?",
+    "Not sure I caught that exactly, but I can help you with:\n• Opening/closing widgets\n• Productivity advice\n• Time & calculations\n• Keyboard shortcuts\n\nWhat interests you?",
+    "I'm your productivity assistant! Try asking me to:\n• 'Open calculator'\n• 'Give me focus advice'\n• 'Show keyboard shortcuts'\n• 'What time is it?'",
+  ];
+  
+  return intelligentDefaults[Math.floor(Math.random() * intelligentDefaults.length)];
+}
 
 // ---------- LOADING SCREEN ----------
 window.addEventListener("load", () => {
@@ -2667,6 +3020,52 @@ function openAI() {
   document.getElementById('aiAssistant').classList.add('active');
   document.body.classList.add('ai-active');
   document.getElementById('aiInput').focus();
+  
+  // Test API connection on first open
+  testAPIConnection();
+}
+
+// Test if API is accessible
+async function testAPIConnection() {
+  console.log('🔍 Testing Sambanova API connection...');
+  
+  try {
+    const testResponse = await fetch(API_ENDPOINTS[0], {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SAMBANOVA_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'Meta-Llama-3.1-8B-Instruct',
+        messages: [
+          { role: 'system', content: 'Test' },
+          { role: 'user', content: 'Hi' }
+        ],
+        max_tokens: 10
+      })
+    });
+    
+    if (testResponse.ok) {
+      console.log('✅ API Connection: SUCCESS');
+      console.log('🎉 Sambanova AI is ready!');
+    } else {
+      console.log('⚠️ API Connection: Failed');
+      console.log('Status:', testResponse.status);
+      const errorText = await testResponse.text();
+      console.log('Error:', errorText);
+      console.log('💡 Will use offline mode as fallback');
+    }
+  } catch (error) {
+    console.log('⚠️ API Connection: Error');
+    console.log('Error:', error.message);
+    console.log('💡 This is likely a CORS issue. Will use offline mode.');
+    console.log('');
+    console.log('📋 To fix CORS issue:');
+    console.log('1. Run from a local server (python -m http.server)');
+    console.log('2. Or use a browser extension to disable CORS temporarily');
+    console.log('3. Or deploy to a web server');
+  }
 }
 
 function closeAI() {
@@ -2701,7 +3100,9 @@ function parseAndExecuteWidgetCommands(message, aiResponse) {
     'calc': 'calcWin',
     'habit': 'habitWin',
     'note': 'notesWin',
-    'converter': 'unitWin'
+    'converter': 'unitWin',
+    'weather': 'weatherWin',
+    'code': 'codeWin'
   };
   
   // Check for open/show commands
@@ -2728,17 +3129,145 @@ function parseAndExecuteWidgetCommands(message, aiResponse) {
     }
   }
   
-  // Check for theme changes
-  if (/(change|set|modify).*theme/i.test(lower)) {
-    const theme = /dark|light/.exec(lower);
-    if (theme) {
-      document.getElementById('themeSelect').value = theme[0];
+  // === AI DYNAMIC CONTENT GENERATION ===
+  
+  // Weather requests
+  if (/(weather|temperature|forecast).*(in|for)/i.test(lower)) {
+    const cityMatch = lower.match(/(?:in|for)\s+([a-z\s]+?)(?:\?|$|,|\.)/i);
+    if (cityMatch) {
+      const city = cityMatch[1].trim();
+      toggle('weatherWin');
+      setTimeout(() => fetchWeather(city), 300);
+    }
+  }
+  
+  // Table generation
+  if (/(create|make|generate|show|build).*table/i.test(lower)) {
+    // Extract table data from AI response if present
+    const tableData = extractTableFromResponse(aiResponse);
+    if (tableData) {
+      populateTable(tableData);
+      toggle('tableWin');
+    }
+  }
+  
+  // Code generation and execution
+  if (/(write|create|make|generate|show).*(code|program|script)/i.test(lower)) {
+    const codeData = extractCodeFromResponse(aiResponse);
+    if (codeData) {
+      setCode(codeData.code, codeData.language);
+    }
+  }
+  
+  // Settings changes
+  if (/(change|set|make|switch).*theme/i.test(lower)) {
+    if (/dark/i.test(lower)) {
+      document.getElementById('themeSelect').value = 'dark';
       document.getElementById('themeSelect').dispatchEvent(new Event('change'));
+    } else if (/light/i.test(lower)) {
+      document.getElementById('themeSelect').value = 'light';
+      document.getElementById('themeSelect').dispatchEvent(new Event('change'));
+    }
+  }
+  
+  if (/(change|set).*(color|accent)/i.test(lower)) {
+    const colorMatch = lower.match(/#[0-9a-f]{6}|#[0-9a-f]{3}|red|blue|green|purple|orange|pink/i);
+    if (colorMatch) {
+      const colorMap = {
+        'red': '#ff5555',
+        'blue': '#5555ff',
+        'green': '#55ff55',
+        'purple': '#aa55ff',
+        'orange': '#ff9955',
+        'pink': '#ff55aa'
+      };
+      const color = colorMap[colorMatch[0].toLowerCase()] || colorMatch[0];
+      document.getElementById('accentInput').value = color;
+      document.getElementById('accentInput').dispatchEvent(new Event('input'));
     }
   }
 }
 
-// Send message to Sambanova AI
+// Extract table data from AI response
+function extractTableFromResponse(response) {
+  // Look for table patterns in response
+  const lines = response.split('\n');
+  const tableLines = [];
+  let inTable = false;
+  
+  for (const line of lines) {
+    if (line.includes('|') && line.trim().length > 0) {
+      inTable = true;
+      tableLines.push(line);
+    } else if (inTable && line.trim() === '') {
+      break;
+    }
+  }
+  
+  if (tableLines.length >= 2) {
+    const headers = tableLines[0].split('|').map(h => h.trim()).filter(h => h);
+    const rows = [];
+    
+    for (let i = 2; i < tableLines.length; i++) {
+      const cells = tableLines[i].split('|').map(c => c.trim()).filter(c => c);
+      if (cells.length > 0) rows.push(cells);
+    }
+    
+    return { headers, rows };
+  }
+  
+  return null;
+}
+
+// Populate table widget with data
+function populateTable(data) {
+  const table = document.getElementById('tbl');
+  table.innerHTML = '';
+  
+  // Add headers
+  if (data.headers && data.headers.length > 0) {
+    const headerRow = table.insertRow();
+    data.headers.forEach(header => {
+      const th = document.createElement('td');
+      th.textContent = header;
+      th.style.fontWeight = 'bold';
+      th.style.background = 'rgba(124,92,255,0.2)';
+      headerRow.appendChild(th);
+    });
+  }
+  
+  // Add data rows
+  if (data.rows && data.rows.length > 0) {
+    data.rows.forEach(row => {
+      const tr = table.insertRow();
+      row.forEach(cell => {
+        const td = tr.insertCell();
+        td.textContent = cell;
+      });
+    });
+  }
+}
+
+// Extract code from AI response
+function extractCodeFromResponse(response) {
+  // Look for code blocks with language specification
+  const codeBlockMatch = response.match(/```(\w+)?\n([\s\S]*?)```/);
+  if (codeBlockMatch) {
+    const language = codeBlockMatch[1] || 'javascript';
+    const code = codeBlockMatch[2].trim();
+    return { code, language };
+  }
+  
+  // Look for inline code
+  const inlineCodeMatch = response.match(/`([^`]+)`/);
+  if (inlineCodeMatch) {
+    return { code: inlineCodeMatch[1], language: 'javascript' };
+  }
+  
+  return null;
+}
+
+// Send message to AI (tries API first, falls back to offline if needed)
 async function sendAIMessage() {
   const input = document.getElementById('aiInput');
   const message = input.value.trim();
@@ -2771,89 +3300,86 @@ async function sendAIMessage() {
     content: message
   });
   
-  try {
-    // Call Sambanova AI API
-    const response = await fetch(SAMBANOVA_BASE_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${SAMBANOVA_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: 'Meta-Llama-3.1-8B-Instruct',
-        messages: aiConversationHistory,
-        temperature: 0.7,
-        top_p: 0.9,
-        max_tokens: 1024,
-        stream: false
-      })
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API Error Response:', errorText);
-      throw new Error(`API Error: ${response.status} - ${errorText}`);
+  // Try API call with all available endpoints
+  let apiSuccess = false;
+  let aiResponse = null;
+  
+  for (let i = 0; i < API_ENDPOINTS.length && !apiSuccess; i++) {
+    try {
+      console.log(`Trying endpoint ${i + 1}/${API_ENDPOINTS.length}: ${API_ENDPOINTS[i]}`);
+      
+      const response = await fetch(API_ENDPOINTS[i], {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SAMBANOVA_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'Meta-Llama-3.1-8B-Instruct',
+          messages: aiConversationHistory,
+          temperature: 0.7,
+          top_p: 0.9,
+          max_tokens: 1024
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ API Success! Response:', data);
+        aiResponse = data.choices[0].message.content;
+        apiSuccess = true;
+        currentEndpointIndex = i; // Remember working endpoint
+        
+        // Show success notification
+        console.log('🎉 Connected to Sambanova AI successfully!');
+      } else {
+        console.log(`❌ Endpoint ${i + 1} failed: ${response.status}`);
+        const errorText = await response.text();
+        console.log('Error details:', errorText);
+      }
+    } catch (error) {
+      console.log(`❌ Endpoint ${i + 1} error:`, error.message);
     }
-    
-    const data = await response.json();
-    console.log('API Response:', data);
-    const aiResponse = data.choices[0].message.content;
-    
-    // Add AI response to conversation history
-    aiConversationHistory.push({
-      role: 'assistant',
-      content: aiResponse
-    });
-    
-    // Hide typing indicator
-    document.getElementById('aiTyping').classList.remove('active');
-    
-    // Execute any widget commands
-    parseAndExecuteWidgetCommands(message, aiResponse);
-    
-    // Add AI response to UI
-    const aiMsg = document.createElement('div');
-    aiMsg.className = 'ai-message assistant';
-    aiMsg.textContent = aiResponse;
-    messagesDiv.appendChild(aiMsg);
-    
-    // Scroll to bottom
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    
-  } catch (error) {
-    console.error('AI Error:', error);
-    console.error('Error details:', error.message);
-    
-    // Hide typing indicator
-    document.getElementById('aiTyping').classList.remove('active');
-    
-    // Remove failed message from history
-    aiConversationHistory.pop();
-    
-    // Use fallback AI response
-    const fallbackResponse = getFallbackResponse(message);
-    
-    // Execute widget commands
-    parseAndExecuteWidgetCommands(message, fallbackResponse);
-    
-    // Show fallback response
-    const errorMsg = document.createElement('div');
-    errorMsg.className = 'ai-message assistant';
-    errorMsg.textContent = fallbackResponse;
-    messagesDiv.appendChild(errorMsg);
-    
-    // Add fallback response to history
-    aiConversationHistory.push({
-      role: 'assistant',
-      content: fallbackResponse
-    });
-    
-    // Scroll to bottom
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  } finally {
-    // Re-enable send button
-    sendBtn.disabled = false;
   }
+  
+  // If API failed, use fallback
+  if (!apiSuccess) {
+    console.log('⚠️ All API endpoints failed. Using offline AI mode.');
+    aiResponse = getSmartAIResponse(message);
+    
+    // Show one-time notice about offline mode
+    if (aiConversationHistory.length === 2) { // First real message
+      const notice = document.createElement('div');
+      notice.className = 'ai-message assistant';
+      notice.style.background = 'rgba(255, 165, 0, 0.2)';
+      notice.textContent = '⚠️ Note: Running in offline mode. For full AI capabilities, the API needs to be accessible. I can still help with widgets, time, calculations, and productivity tips!';
+      messagesDiv.appendChild(notice);
+    }
+  }
+  
+  // Hide typing indicator
+  document.getElementById('aiTyping').classList.remove('active');
+  
+  // Execute widget commands
+  parseAndExecuteWidgetCommands(message, aiResponse);
+  
+  // Add AI response to UI
+  const aiMsg = document.createElement('div');
+  aiMsg.className = 'ai-message assistant';
+  aiMsg.textContent = aiResponse;
+  messagesDiv.appendChild(aiMsg);
+  
+  // Add to conversation history
+  aiConversationHistory.push({
+    role: 'assistant',
+    content: aiResponse
+  });
+  
+  // Scroll to bottom
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+  // Re-enable send button
+  sendBtn.disabled = false;
 }
 
 // ---------- Backgrounds ----------
@@ -3175,6 +3701,32 @@ function initWindowDrag(win) {
 // Init drag on all existing windows
 document.querySelectorAll(".window").forEach(w => initWindowDrag(w));
 
+// Make sure weather city input works on Enter key
+document.addEventListener('DOMContentLoaded', function() {
+  const weatherInput = document.getElementById('weatherCity');
+  if (weatherInput) {
+    weatherInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        fetchWeather();
+      }
+    });
+  }
+  
+  const codeInput = document.getElementById('codeInput');
+  if (codeInput) {
+    codeInput.addEventListener('keydown', function(e) {
+      // Allow tab in code editor
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 2;
+      }
+    });
+  }
+});
+
 
 // ---------- CLOSE ALL ----------
 function closeAllWindows() {
@@ -3196,6 +3748,8 @@ document.addEventListener('keydown', (e) => {
     if (e.key === '2') { e.preventDefault(); toggle('focusWin'); }
     if (e.key === '3') { e.preventDefault(); toggle('swWin'); }
     if (e.key === '4') { e.preventDefault(); toggle('calcWin'); }
+    if (e.key === '5') { e.preventDefault(); toggle('weatherWin'); }
+    if (e.key === '6') { e.preventDefault(); toggle('codeWin'); }
   }
   if (e.ctrlKey && e.shiftKey && e.key === 'X') { e.preventDefault(); closeAllWindows(); }
 });
@@ -3389,6 +3943,168 @@ function deleteNote(i) {
   renderNotes();
 }
 renderNotes();
+
+// ---------- WEATHER WIDGET ----------
+async function fetchWeather(city) {
+  const cityInput = document.getElementById('weatherCity');
+  const display = document.getElementById('weatherDisplay');
+  
+  if (!city) {
+    city = cityInput.value.trim();
+  } else {
+    cityInput.value = city;
+  }
+  
+  if (!city) {
+    display.innerHTML = '<p style="opacity:0.6;margin-top:40px;">Please enter a city name</p>';
+    return;
+  }
+  
+  display.innerHTML = '<p style="opacity:0.6;margin-top:40px;">Loading weather data...</p>';
+  
+  try {
+    // Using Open-Meteo free API (no key required)
+    // First get coordinates from city name
+    const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
+    const geoData = await geoResponse.json();
+    
+    if (!geoData.results || geoData.results.length === 0) {
+      display.innerHTML = `<p style="color:#ff5f57;">City "${city}" not found. Try another city.</p>`;
+      return;
+    }
+    
+    const location = geoData.results[0];
+    const { latitude, longitude, name, country } = location;
+    
+    // Get weather data
+    const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&timezone=auto`);
+    const weatherData = await weatherResponse.json();
+    
+    const current = weatherData.current;
+    const temp = Math.round(current.temperature_2m);
+    const feelsLike = Math.round(current.apparent_temperature);
+    const humidity = current.relative_humidity_2m;
+    const windSpeed = Math.round(current.wind_speed_10m);
+    
+    // Weather condition based on WMO code
+    const weatherConditions = {
+      0: '☀️ Clear',
+      1: '🌤️ Mainly Clear',
+      2: '⛅ Partly Cloudy',
+      3: '☁️ Overcast',
+      45: '🌫️ Foggy',
+      48: '🌫️ Foggy',
+      51: '🌦️ Light Drizzle',
+      61: '🌧️ Light Rain',
+      63: '🌧️ Rain',
+      65: '🌧️ Heavy Rain',
+      71: '🌨️ Light Snow',
+      73: '🌨️ Snow',
+      75: '🌨️ Heavy Snow',
+      95: '⛈️ Thunderstorm'
+    };
+    
+    const condition = weatherConditions[current.weather_code] || '🌍 Weather';
+    
+    display.innerHTML = `
+      <div style="margin-top:20px;">
+        <h2 style="margin:0;font-size:24px;">${name}, ${country}</h2>
+        <div style="font-size:48px;margin:15px 0;">${condition}</div>
+        <div style="font-size:52px;font-weight:600;margin:10px 0;">${temp}°C</div>
+        <div style="opacity:0.8;font-size:14px;margin-bottom:20px;">Feels like ${feelsLike}°C</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;max-width:200px;margin:0 auto;">
+          <div style="padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;">
+            <div style="font-size:11px;opacity:0.6;">HUMIDITY</div>
+            <div style="font-size:16px;font-weight:600;">${humidity}%</div>
+          </div>
+          <div style="padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;">
+            <div style="font-size:11px;opacity:0.6;">WIND</div>
+            <div style="font-size:16px;font-weight:600;">${windSpeed} km/h</div>
+          </div>
+        </div>
+      </div>
+    `;
+  } catch (error) {
+    console.error('Weather fetch error:', error);
+    display.innerHTML = '<p style="color:#ff5f57;">Failed to fetch weather data. Please try again.</p>';
+  }
+}
+
+// ---------- CODE RUNNER ----------
+function runCode() {
+  const codeInput = document.getElementById('codeInput').value;
+  const output = document.getElementById('codeOutput');
+  const lang = document.getElementById('codeLang').value;
+  
+  output.innerHTML = '';
+  
+  if (!codeInput.trim()) {
+    output.textContent = 'Please write some code first!';
+    return;
+  }
+  
+  try {
+    if (lang === 'javascript') {
+      // Capture console.log output
+      const logs = [];
+      const originalLog = console.log;
+      console.log = function(...args) {
+        logs.push(args.map(arg => 
+          typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+        ).join(' '));
+        originalLog.apply(console, args);
+      };
+      
+      try {
+        const result = eval(codeInput);
+        console.log = originalLog;
+        
+        if (logs.length > 0) {
+          output.textContent = logs.join('\n');
+        } else if (result !== undefined) {
+          output.textContent = String(result);
+        } else {
+          output.textContent = '✓ Code executed successfully (no output)';
+        }
+      } catch (error) {
+        console.log = originalLog;
+        throw error;
+      }
+    } else if (lang === 'html') {
+      output.innerHTML = `<iframe srcdoc="${codeInput.replace(/"/g, '&quot;')}" style="width:100%;height:100%;border:none;background:white;border-radius:8px;"></iframe>`;
+    } else if (lang === 'css') {
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <style>${codeInput}</style>
+          </head>
+          <body>
+            <div class="preview-box">CSS Preview</div>
+            <p>This is a paragraph with custom styles.</p>
+            <button>Button</button>
+          </body>
+        </html>
+      `;
+      output.innerHTML = `<iframe srcdoc="${html.replace(/"/g, '&quot;')}" style="width:100%;height:100%;border:none;background:white;border-radius:8px;"></iframe>`;
+    }
+  } catch (error) {
+    output.innerHTML = `<span style="color:#ff5f57;">Error: ${error.message}</span>`;
+  }
+}
+
+function clearCode() {
+  document.getElementById('codeInput').value = '';
+  document.getElementById('codeOutput').innerHTML = '';
+}
+
+// Set code in code runner (used by AI)
+function setCode(code, language = 'javascript') {
+  document.getElementById('codeInput').value = code;
+  document.getElementById('codeLang').value = language;
+  toggle('codeWin');
+  setTimeout(() => runCode(), 300);
+}
 </script>
 </body>
 </html>
